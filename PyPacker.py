@@ -1,81 +1,16 @@
-import sys
-import os
-import re
-import time
+import sys, os, re, time
 
 class utils: #startup and other universal utils
     def __init__(self):
         
-        global BLACK
-        global RED
-        global BRED
-        global GREEN
-        global BGREEN
-        global YELLOW
-        global BYELLOW
-        global BLUE
-        global MAGENTA
-        global BMAGENTA
-        global CYAN
-        global WHITE
-        global BWHITE
-        global RESET
-        global BOLD
-        global UNDERLINE
-        
         try:
-            if ColorToggle != "false":
-                BLACK = '\u001b[30m'
-                RED = '\u001b[31m'
-                BRED = '\u001b[41;1m'
-                GREEN = '\u001b[32m'
-                BGREEN = '\u001b[42;1m'
-                YELLOW = '\033[92m'
-                BYELLOW = '\u001b[43;1m'
-                BLUE = '\u001b[34m'
-                MAGENTA = '\u001b[35m'
-                BMAGENTA = '\u001b[45;1m'
-                CYAN = '\u001b[36;1m'
-                WHITE = '\u001b[37m'
-                BWHITE = '\u001b[47;1m'
-                RESET = '\u001b[0m'
-                BOLD = '\033[1m'
-                UNDERLINE = '\033[4m'
+            if settings[2] == "True":
+                utils.fullColors(self)
             else:
-                BLACK = '\u001b[0m'
-                RED = '\u001b[0m'
-                BRED = '\u001b[0m'
-                GREEN = '\u001b[0m'
-                BGREEN = '\u001b[0m'
-                YELLOW = '\u001b[0m'
-                BYELLOW = '\u001b[0m'
-                BLUE = '\u001b[0m'
-                MAGENTA = '\u001b[0m'
-                BMAGENTA = '\u001b[0m'
-                CYAN = '\u001b[0m'
-                WHITE = '\u001b[0m'
-                BWHITE = '\u001b[0m'
-                RESET = '\u001b[0m'
-                BOLD = '\u001b[0m'
-                UNDERLINE = '\u001b[0m'
+                utils.blankColors(self)
         except:
-            print("Color Handling Failed, errors might occour later")
-            BLACK = '\u001b[30m'
-            RED = '\u001b[31m'
-            BRED = '\u001b[41;1m'
-            GREEN = '\u001b[32m'
-            BGREEN = '\u001b[42;1m'
-            YELLOW = '\033[92m'
-            BYELLOW = '\u001b[43;1m'
-            BLUE = '\u001b[34m'
-            MAGENTA = '\u001b[35m'
-            BMAGENTA = '\u001b[45;1m'
-            CYAN = '\u001b[36;1m'
-            WHITE = '\u001b[37m'
-            BWHITE = '\u001b[47;1m'
-            RESET = '\u001b[0m'
-            BOLD = '\033[1m'
-            UNDERLINE = '\033[4m'
+            print("Color Handling Failed, colors are turned off for  errors might occour later")
+            utils.blankColors(self)
 
 
     global mineVersions
@@ -106,21 +41,95 @@ class utils: #startup and other universal utils
         "1.19.1":"10",
         "1.19.2":"10"
     }
-    
-    def VersionHandler(self, version):
-        foundVersion = "false"
-        while foundVersion == "false":
-            for ver, verid in mineVersions.items():
-                if ver == version:
-                    foundVersion = "true"
-                    print("ver")
-                    return ver
 
-            if foundVersion == "false":
-                return "failed"
+    def blankColors(self):
+        global BLACK
+        global RED
+        global BRED
+        global GREEN
+        global BGREEN
+        global YELLOW
+        global BYELLOW
+        global BLUE
+        global MAGENTA
+        global BMAGENTA
+        global CYAN
+        global WHITE
+        global BWHITE
+        global RESET
+        global BOLD
+        global UNDERLINE
+        BLACK = ''
+        RED = ''
+        BRED = ''
+        GREEN = ''
+        BGREEN = ''
+        YELLOW = ''
+        BYELLOW = ''
+        BLUE = ''
+        MAGENTA = ''
+        BMAGENTA = ''
+        CYAN = ''
+        WHITE = ''
+        BWHITE = ''
+        RESET = ''
+        BOLD = ''
+        UNDERLINE = ''
+        
+    def fullColors(self):
+        global BLACK
+        global RED
+        global BRED
+        global GREEN
+        global BGREEN
+        global YELLOW
+        global BYELLOW
+        global BLUE
+        global MAGENTA
+        global BMAGENTA
+        global CYAN
+        global WHITE
+        global BWHITE
+        global RESET
+        global BOLD
+        global UNDERLINE
+        BLACK = '\u001b[30m'
+        RED = '\u001b[31m'
+        BRED = '\u001b[41;1m'
+        GREEN = '\u001b[32m'
+        BGREEN = '\u001b[42;1m'
+        YELLOW = '\033[92m'
+        BYELLOW = '\u001b[43;1m'
+        BLUE = '\u001b[34m'
+        MAGENTA = '\u001b[35m'
+        BMAGENTA = '\u001b[45;1m'
+        CYAN = '\u001b[36;1m'
+        WHITE = '\u001b[37m'
+        BWHITE = '\u001b[47;1m'
+        RESET = "\u001b[0m"
+        BOLD = '\033[1m'
+        UNDERLINE = '\033[4m'
+    
     def LocalFiles(self):
         return os.path.dirname(os.path.realpath(__file__))
 
+    def append_mkdir(self, dir):
+        try:
+            os.mkdir(dir)
+        except:
+            tryPathTemp = 0
+            while tryPathTemp >= 0:
+                try:
+                    os.mkdir(dir + "_" + str(tryPathTemp))
+                    break
+                except:
+                    tryPathTemp += 1
+    
+    def load_defaults():
+        settings.append("1.19.2")
+        settings.append("local")
+        settings.append("False")
+    
 class main: #the main program
     def __init__(self):
         
@@ -128,62 +137,67 @@ class main: #the main program
         global settings
         settings = []
         
-        try:
-            with open("settings.txt","r") as f:
-                data = f.readlines() #readlines() returns a list of items in said file
-                print(data)
+        if bool(os.path.exists(utils.LocalFiles(self) + "\settings.txt")) == True:
+        
+            try:
+                with open("settings.txt","r") as f:
+                    data = f.readlines() #readlines() returns a list of items in said file
+                    print(data)
 
-            for i in range(0, 5): #list loop, the console is (unintentionally) spammed for a bit
-                print(data[i])
-                settings.append(data[i])
-                print(settings)
-            
-            #begin settings handlers:
-            
-            #version, needs to be completly redone it jsut spitting out constant errors
-            global Dversion
-            if utils.VersionHandler(self, settings[0]) == "failed":
-                print("error while setting default version, setting to 1.19.2")
-                Dversion = "1.19.2"
-            else:
-                Dversion = data[0]
-                print("loaded default version:" + Dversion)
-            
-            #filepath
-            global filePath
-            if settings[1] == "local\n":
-                filePath = utils.LocalFiles("")
-                print('filepath set to "local"')
-            else:
-                filePath = settings[1]
-                print("chosen filepath:" + filePath)
-            
-            #color
-            global ColorToggle
-            if settings[2] == "true":
-                ColorToggle = "false"
-                print("colored text off")
-            else:
-                ColorToggle = "true"
-                print("colored text on")  
-            
-        except:
-            print("error while handling settings, loading default settings, some errors might occour later")
-            settings.append("1.19.2\n")
-            settings.append("local\n")
-            settings.append("true\n")
-            settings.append("1\n")
-            settings.append("false")
-            
+                for i in range(0, len(data)): #list loop, the console is (unintentionally) spammed for a bit
+                    print(data[i])
+                    settings.append(data[i].strip('\n'))
+                    print(settings)
+                print("end debug messages\n")
+                
+                f.close()
+                
+                #begin settings handlers:
+                
+                #version
+                if settings[0] in mineVersions:
+                    print("set default version to: " + settings[0])
+                else:
+                    settings[0] = "1.19.2"
+                    print("error while setting default version, setting to 1.19.2")
+                
+                #filepath
+                global filePath
+                if settings[1] == "local":
+                    filePath = utils.LocalFiles("")
+                    print('output filepath set to "local", aka: ' + filePath)
+                else:
+                    filePath = settings[1]
+                    print("chosen filepath:" + filePath)
+                
+                #color
+                if settings[2] == True:
+                    print("colored text off")
+                else:
+                    print("colored text on")
+                
+                print("end settings messages\n\n")
+                
+            except:
+                print("error while handling settings, some errors might occour later, loading default settings:\n1.19.2\nlocal file output\ncolors off")
+                utils.load_defaults()
+        else:
+            print("settings.txt file does not exist, some errors might occour later, loading default settings:\n1.19.2\nlocal file output\ncolors off\n")
+            utils.load_defaults()
+        
 
     def main():
-        
+        #text colors:
+        #   user information: BGREEN, BLACK
+        #   debug information: BYELLOW, BLACK
+        #   options: BWHITE, BLACK
+        #   user input: RESET, CYAN
         #settings: (also a settings.txt explanation)
         #   default version (set to 1.19.2 by default)
         #   default file location (set to local by default)
         #   color toggle
-        #   first login (with a reset button in case a package or this breaks)
-        #   debug mode (useless atm)
+        #   first login (with a reset button in case a package or this breaks, useless atm)
+        #   debug mode (also useless atm)
         #opens:
         #   DPfiles() for datapacks
         #   RPfiles() for resrouce packs/texture packs
@@ -195,167 +209,179 @@ class main: #the main program
         
         print(BGREEN + 'Welcome to PyPacker! Where would you like to start?\n(Case sensitve, all lowercase; "open" and "output" not guaranteed to work on all Lunix distros)' + RESET)
         #"[name] > [command]"+ RESET +"\n"+ BWHITE + BLACK + paste this between a "black+" and begining of the next command name.
-        lastMain = input(BWHITE + BLACK + "Open Program Folder > open"+ RESET +"\n"+ BWHITE + BLACK + "Open Output Folder > output"+ RESET +"\n"+ BWHITE + BLACK +"Launch Datapack File Generator > dpfiles"+ RESET +"\n"+ BWHITE + BLACK +"Quit PyPacker > quit\n" + RESET + "\n\n" + CYAN)
-        validMain = "false"
-        while validMain == "false":
+        validMain = "stay"
+        while validMain == "stay":
+            lastMain = input(BWHITE + BLACK + "Open Program Folder > open"+ RESET +"\n"+ BWHITE + BLACK + "Open Output Folder > out"+ RESET +"\n"+ BWHITE + BLACK +"Settings Menu > settings"+ RESET +"\n"+ BWHITE + BLACK +"Launch Datapack File Generator > dpfiles"+ RESET +"\n"+ BWHITE + BLACK +"Quit PyPacker > quit\n" + RESET + "\n" + CYAN)
         
-            if lastMain == "open":
+            if lastMain == "open": #opens the program file location
                 if sys.platform=='win32':
                     os.system("start " + utils.LocalFiles(""))
 
                 if sys.platform=='darwin':
                     os.system("open " + utils.LocalFiles(""))
 
-                input(RESET + BYELLOW + "Program File has been opened, press enter to choose another option." + RESET + CYAN)
-                lastMain = ""
+                print(RESET + BYELLOW + "Program File has been opened, choose another option." + RESET + CYAN + "\n")
                 
-            elif lastMain == "output":
+                
+            elif lastMain == "out": #attempts to open the program output file location
                 if sys.platform=='win32':
                     os.system("start " + filePath)
 
                 if sys.platform=='darwin':
                     os.system("open " + filePath)
 
-                input(RESET + BYELLOW + "Output File has been opened, press enter to choose another option." + RESET + CYAN)
-                lastMain = ""
+                print(RESET + BYELLOW + "Output File has been opened, choose another option." + RESET + CYAN + "\n")
                 
-            elif lastMain == "quit":
-                input(RESET + BYELLOW + "Press enter to quit." + RESET + CYAN)
-                sys.exit()
                 
-            elif lastMain == "settings":
+            elif lastMain == "settings": #settings page
                 print(RESET + BYELLOW + "settings not impelmented yet" + RESET + CYAN)
-                lastMain = ""
-                
-            elif lastMain == "dpfiles":
-                print(RESET + BYELLOW + "launching DP file generator, ALT+F4 at any time to abort" + RESET + CYAN)
-                files.DPfiles()
-                
-            elif lastMain == "rpfiles":
+            
+            elif lastMain == "utils": #commonly used utils
                 return
             
+            elif lastMain == "dpfiles": #datapack file creator
+                print(RESET + BYELLOW + "launching DP file generator" + RESET + CYAN)
+                lastMain = "leave menu"
+                files.DPfiles()
+                
+            elif lastMain == "rpfiles": #resourcepack file creator
+                print(RESET + BYELLOW + "launching RP file generator" + RESET + CYAN)
+                lastMain = "leave menu"
+                files.RPfiles()
+            
+            elif lastMain == "quit": #closes the program
+                input(RESET + BYELLOW + "Press enter to quit." + RESET + "\n")
+                sys.exit()
+            
+            elif lastMain == "": #fixes a stupid bug that spams the custom error below
+                return
+                            
             else:
-                lastMain = input(RESET + RED + "Invalid argument. Please send a valid word.\n" + RESET + CYAN)
+                print(RESET + RED + "Invalid argument. Please send a valid word.\n" + RESET + CYAN + "\n")
         
 class files: #file makers
     def __init__():
         pass
     
     def DPfiles():
-        packName = input(BGREEN + "Welcome to DataCreate! How do you want to name your datapack?" + RESET + "\n\n" + CYAN)
-        time.sleep(0.5)
-        dataName = input(RESET + BYELLOW + "How do you want to name your namespace?" + RESET + "\n\n" + CYAN).lower()
-        validName = "false"
-        while validName == "false":
-            if(bool(re.match('^[a-zA-Z0-9_]*$',dataName))==True):
-                validName = "true"
-            else:
-                dataName = input(RESET + RED + "Namespace not valid. Namespaces can not use specials characters. Please give a valid name.\n" + RESET + CYAN)
-        time.sleep(0.5)
-        dataVer = input(RESET + BMAGENTA + "What is the minecraft version of your pack? (Leave blank for your chosen default version, currently: " + Dversion + ")" + RESET + "\n\n" + CYAN)
-
-        if dataVer == "":
-            dataVer = Dversion
-        else:
-            foundVersion = "false"
-            while foundVersion == "false":
-                for ver,verid in mineVersions.items():
-                    if ver == dataVer:
-                        dataVer = verid
-                        foundVersion = "true"
-
-                if foundVersion == "false":
-                    dataVer = input(RESET + RED + "Version not found. Please give a supported version.\n" + RESET + CYAN)
-        time.sleep(0.5)
-        dataDesc = input(RESET + BWHITE + "What is the description of your datapack?" + RESET + "\n\n" + CYAN)
-        time.sleep(0.5)
-        dataPath = input(RESET + BRED + "Where do you want to create your datapack? (Leave blank for your chosen default filepath, currently: " + filePath + ")" + RESET + "\n\n" + CYAN)
-
-        if dataPath == "":
-            dataPath = filePath
-
-        validDir = "false"
-        while validDir == "false":
-            if dataPath:
-                isDirectory = os.path.isdir(dataPath)
-                if isDirectory == False:
-                    dataPath = input(RESET + RED + "The path you provided is invalid. Please give a valid path. (Leave blank to create in the script's folder)\n" + RESET + CYAN)
+        packName = input(BGREEN + 'Welcome to DataCreate! How do you want to name your datapack? (enter "quit" now to abort)' + RESET + "\n\n" + CYAN)
+        if packName != "quit":
+            time.sleep(0.5)
+            dataName = input(RESET + BYELLOW + "How do you want to name your namespace?" + RESET + "\n\n" + CYAN).lower()
+            validName = "false"
+            while validName == "false":
+                if(bool(re.match('^[a-zA-Z0-9_]*$',dataName))==True):
+                    validName = "true"
                 else:
-                    validDir = "true"
+                    dataName = input(RESET + RED + "Namespace not valid. Namespaces can not use specials characters. Please give a valid name.\n" + RESET + CYAN)
+            time.sleep(0.5)
+            dataVer = input(RESET + BMAGENTA + "What is the minecraft version of your pack? (Leave blank for your chosen default version, currently: " + settings[0] + ")" + RESET + "\n\n" + CYAN)
 
-        os.chdir(dataPath)
-        os.mkdir(packName)
-        os.chdir(packName)
-        os.mkdir("data")
-        packMcmeta = open("pack.mcmeta", "w")
-        packMcmeta.write('{"pack": {"pack_format": ' + dataVer + ',"description": "' + dataDesc + '"}}')
-        packMcmeta.close()
-        os.chdir("data")
-        os.mkdir("minecraft")
-        os.mkdir(dataName)
-        os.chdir("minecraft")
-        os.mkdir("tags")
-        os.chdir("tags")
-        os.mkdir("functions")
-        os.chdir("functions")
-        tickJ = open("tick.json", "w")
-        tickJ.write('{"values": ["' + dataName + ':tick"]}')
-        tickJ.close()
-        loadJ = open("load.json", "w")
-        loadJ.write('{"values": ["' + dataName + ':load"]}')
-        loadJ.close()
-        os.chdir(dataPath + '/' + packName + '/data/' + dataName)
-        os.mkdir("advancements")
-        os.mkdir("dimension")
-        os.mkdir("dimension_type")
-        os.mkdir("functions")
-        os.chdir("functions")
-        tickM = open("tick.mcfunction", "w")
-        tickM.write('##Write below every commands you want to execute each ticks.')
-        tickM.close()
-        loadM = open("load.mcfunction", "w")
-        loadM.write('##Write below every commands you want to execute on each reload.\ntellraw @a {"text":"' + packName + ' has reloaded","color":"blue"}')
-        loadM.close()
-        os.chdir("..")
-        os.mkdir("loot_tables")
-        os.mkdir("predicates")
-        os.mkdir("recipes")
-        os.mkdir("structures")
-        os.mkdir("item_modifiers")
-        os.mkdir("tags")
-        os.mkdir("worldgen")
-        os.chdir("worldgen")
-        os.mkdir("biome")
-        os.mkdir("configured_carver")
-        os.mkdir("configured_feature")
-        os.mkdir("configured_structure_feature")
-        os.mkdir("configured_surface_builder")
-        os.mkdir("noise_settings")
-        os.mkdir("processor_list")
-        os.mkdir("template_pool")
-        lastDP = input(RESET + BGREEN + "Your datapack has been generated! What do you want to do?" + RESET + "\n" + BWHITE + BLACK + "Open folder > open\nQuit PyPacker > quit\nEdit Datapack > Edit" + RESET + CYAN + "\n\n")
-        time.sleep(10)
-        validDP = "false"
-        while validDP == "false":
-        
-            if lastDP == "open":
-                if sys.platform=='win32':
-                    os.system("start "+ dataPath)
-
-                if sys.platform=='darwin':
-                    os.system("open " + dataPath)
-
-                input(RESET + BYELLOW + "File has been opened, press enter to choose another option. (Original DPfiles made by Origaming)" + RESET)
-                lastDP = ""
-            elif lastDP == "quit":
-                input(RESET + BYELLOW + "Press enter to quit. (Original DPfiles made by Origaming)" + RESET)
-                sys.exit()
-            elif lastDP == "open":
-                input(RESET + BYELLOW + "Press enter to enter editor, Alt+F4 to abort. (Original DPfiles made by Origaming)" + RESET)
-                #os.system("DP_editor")
-                sys.exit()
+            if dataVer == "":
+                dataVer = settings[0]
             else:
-                lastDP = input(RESET + RED + "Invalid argument. Please send a valid word.\n" + RESET + CYAN)
+                foundVersion = "false"
+                while foundVersion == "false":
+                    for ver,verid in mineVersions.items():
+                        if ver == dataVer:
+                            dataVer = verid
+                            foundVersion = "true"
+
+                    if foundVersion == "false":
+                        dataVer = input(RESET + RED + "Version not found. Please give a supported version.\n" + RESET + CYAN)
+            time.sleep(0.5)
+            dataDesc = input(RESET + BWHITE + "What is the description of your datapack?" + RESET + "\n\n" + CYAN)
+            time.sleep(0.5)
+            dataPath = input(RESET + BRED + "Where do you want to create your datapack? (Leave blank for your chosen default filepath, currently: " + filePath + ")" + RESET + "\n\n" + CYAN)
+
+            if dataPath == "":
+                dataPath = filePath
+
+            validDir = "false"
+            while validDir == "false":
+                if dataPath:
+                    isDirectory = os.path.isdir(dataPath)
+                    if isDirectory == False:
+                        dataPath = input(RESET + RED + "The path you provided is invalid. Please give a valid path. (Leave blank to create in the script's folder)\n" + RESET + CYAN)
+                    else:
+                        validDir = "true"
+
+            os.chdir(dataPath)
+            utils.append_mkdir("",packName)
+            os.chdir(packName)
+            utils.append_mkdir("","data")
+            packMcmeta = open("pack.mcmeta", "w")
+            packMcmeta.write('{\n"pack": {\n"pack_format": ' + dataVer + ',\n"description": "' + dataDesc + '"\n}\n}') #the formating of this is all messed up, a fix is nessasary
+            packMcmeta.close()
+            os.chdir("data")
+            utils.append_mkdir("","minecraft")
+            os.mkdir(dataName)
+            os.chdir("minecraft")
+            os.mkdir("tags")
+            os.chdir("tags")
+            os.mkdir("functions")
+            os.chdir("functions")
+            tickJ = open("tick.json", "w")
+            tickJ.write('{"values": ["' + dataName + ':tick"]}')
+            tickJ.close()
+            loadJ = open("load.json", "w")
+            loadJ.write('{"values": ["' + dataName + ':load"]}')
+            loadJ.close()
+            os.chdir(dataPath + '/' + packName + '/data/' + dataName)
+            os.mkdir("advancements")
+            os.mkdir("dimension")
+            os.mkdir("dimension_type")
+            os.mkdir("functions")
+            os.chdir("functions")
+            tickM = open("tick.mcfunction", "w")
+            tickM.write('##Write below every commands you want to execute each ticks.')
+            tickM.close()
+            loadM = open("load.mcfunction", "w")
+            loadM.write('##Write below every commands you want to execute on each reload.\ntellraw @a {"text":"' + packName + ' has reloaded","color":"blue"}')
+            loadM.close()
+            os.chdir("..")
+            os.mkdir("loot_tables")
+            os.mkdir("predicates")
+            os.mkdir("recipes")
+            os.mkdir("structures")
+            os.mkdir("item_modifiers")
+            os.mkdir("tags")
+            os.mkdir("worldgen")
+            os.chdir("worldgen")
+            os.mkdir("biome")
+            os.mkdir("configured_carver")
+            os.mkdir("configured_feature")
+            os.mkdir("configured_structure_feature")
+            os.mkdir("configured_surface_builder")
+            os.mkdir("noise_settings")
+            os.mkdir("processor_list")
+            os.mkdir("template_pool")
+            lastDP = input(RESET + BGREEN + "Your datapack has been generated! What do you want to do?" + RESET + "\n" + BWHITE + BLACK + "Open folder > open\nQuit PyPacker > quit" + RESET + "\n" + BWHITE + BLACK + "Edit Datapack > Edit" + RESET + CYAN + "\n\n")
+            time.sleep(10)
+            validDP = "false"
+            while validDP == "false":
+            
+                if lastDP == "open":
+                    if sys.platform=='win32':
+                        os.system("start "+ dataPath)
+
+                    if sys.platform=='darwin':
+                        os.system("open " + dataPath)
+
+                    input(RESET + BYELLOW + "File has been opened, press enter to choose another option. (Original DPfiles made by Origaming)" + RESET)
+                    lastDP = ""
+                elif lastDP == "quit":
+                    input(RESET + BYELLOW + "Press enter to quit. (Original DPfiles made by Origaming)" + RESET)
+                    sys.exit()
+                elif lastDP == "open":
+                    input(RESET + BYELLOW + "Press enter to enter editor, Alt+F4 to abort. (Original DPfiles made by Origaming)" + RESET)
+                    #os.system("DP_editor")
+                    sys.exit()
+                else:
+                    lastDP = input(RESET + RED + "Invalid argument. Please send a valid word.\n" + RESET + CYAN)
+        else:
+            print(BYELLOW + 'launching main menu' + RESET)
+            main.main()
                 
     def RPfiles():
         pass
@@ -395,6 +421,9 @@ class editors: #file editors, notes here going forward
     def __init__(self):
         pass
 
-PPmain = main()
+PPmain = main() #for settings handling
+print("PyPacker is loading!\n")
+time.sleep(0.5)
 PPutils = utils()
+time.sleep(0.5)
 main.main()
