@@ -1,82 +1,8 @@
-import sys, os, re, time
+import sys, os, re, time #all built in, convenient
+os.system("") #why does this fix ANSI color coding? god only knows, i have no clue
 
 class utils: #startup and other universal utils
     def __init__(self):
-        
-        try:
-            if settings[2] == "True":
-                utils.fullColors(self)
-            else:
-                utils.blankColors(self)
-        except:
-            print("Color Handling Failed, colors are turned off for  errors might occour later")
-            utils.blankColors(self)
-
-
-    global mineVersions
-    mineVersions = { #Every MC version this is compatable with
-        "1.13":"4",
-        "1.13.1":"4",
-        "1.13.2":"4",
-        "1.14":"4",
-        "1.14.1":"4",
-        "1.14.2":"4",
-        "1.14.3":"4",
-        "1.14.4":"4",
-        "1.15":"5",
-        "1.15.1":"5",
-        "1.15.2":"5",
-        "1.16":"5",
-        "1.16.1":"5",
-        "1.16.2":"6",
-        "1.16.3":"6",
-        "1.16.4":"6",
-        "1.16.5":"6",
-        "1.17":"7",
-        "1.17.1":"7",
-        "1.18":"8",
-        "1.18.1":"8",
-        "1.18.2":"9",
-        "1.19":"10",
-        "1.19.1":"10",
-        "1.19.2":"10"
-    }
-
-    def blankColors(self):
-        global BLACK
-        global RED
-        global BRED
-        global GREEN
-        global BGREEN
-        global YELLOW
-        global BYELLOW
-        global BLUE
-        global MAGENTA
-        global BMAGENTA
-        global CYAN
-        global WHITE
-        global BWHITE
-        global RESET
-        global BOLD
-        global UNDERLINE
-        BLACK = ''
-        RED = ''
-        BRED = ''
-        GREEN = ''
-        BGREEN = ''
-        YELLOW = ''
-        BYELLOW = ''
-        BLUE = ''
-        MAGENTA = ''
-        BMAGENTA = ''
-        CYAN = ''
-        WHITE = ''
-        BWHITE = ''
-        RESET = ''
-        BOLD = ''
-        UNDERLINE = ''
-        
-    def fullColors(self):
         global BLACK
         global RED
         global BRED
@@ -109,6 +35,36 @@ class utils: #startup and other universal utils
         RESET = "\u001b[0m"
         BOLD = '\033[1m'
         UNDERLINE = '\033[4m'
+
+
+    global mineVersions
+    mineVersions = { #Every MC version this is compatable with
+        "1.13":"4",
+        "1.13.1":"4",
+        "1.13.2":"4",
+        "1.14":"4",
+        "1.14.1":"4",
+        "1.14.2":"4",
+        "1.14.3":"4",
+        "1.14.4":"4",
+        "1.15":"5",
+        "1.15.1":"5",
+        "1.15.2":"5",
+        "1.16":"5",
+        "1.16.1":"5",
+        "1.16.2":"6",
+        "1.16.3":"6",
+        "1.16.4":"6",
+        "1.16.5":"6",
+        "1.17":"7",
+        "1.17.1":"7",
+        "1.18":"8",
+        "1.18.1":"8",
+        "1.18.2":"9",
+        "1.19":"10",
+        "1.19.1":"10",
+        "1.19.2":"10"
+    }
     
     def LocalFiles(self):
         return os.path.dirname(os.path.realpath(__file__))
@@ -128,7 +84,8 @@ class utils: #startup and other universal utils
     def load_defaults():
         settings.append("1.19.2")
         settings.append("local")
-        settings.append("False")
+        settings.append("Move")
+        settings.append("True")
     
 class main: #the main program
     def __init__(self):
@@ -138,53 +95,49 @@ class main: #the main program
         settings = []
         
         if bool(os.path.exists(utils.LocalFiles(self) + "\settings.txt")) == True:
-        
-            try:
-                with open("settings.txt","r") as f:
-                    data = f.readlines() #readlines() returns a list of items in said file
-                    print(data)
 
-                for i in range(0, len(data)): #list loop, the console is (unintentionally) spammed for a bit
-                    print(data[i])
-                    settings.append(data[i].strip('\n'))
-                    print(settings)
-                print("end debug messages\n")
+            openTXT = utils.LocalFiles(self) + "\settings.txt"
+
+            with open(openTXT,"r") as f:
+                data = f.readlines() #readlines() returns a list of items in said file
+
+            for i in range(0, len(data)): #list loop, the console is (unintentionally) spammed for a bit
+                settings.append(data[i].strip('\n'))
                 
-                f.close()
-                
-                #begin settings handlers:
-                
-                #version
-                if settings[0] in mineVersions:
-                    print("set default version to: " + settings[0])
-                else:
-                    settings[0] = "1.19.2"
-                    print("error while setting default version, setting to 1.19.2")
-                
-                #filepath
-                global filePath
-                if settings[1] == "local":
-                    filePath = utils.LocalFiles("")
-                    print('output filepath set to "local", aka: ' + filePath)
-                else:
+            f.close()
+            
+            if settings[3] != "False":
+                print(f"start debug messages:\n{openTXT}\n{data}\n{settings}")
+            
+            #settings handlers:
+            
+            #version
+            if settings[0] in mineVersions:
+                if settings[3] != "False":
+                    print(f'set default version to: {settings[0]}')
+            else:
+                settings[0] = "1.19.2"
+                print(f"error while setting default version, setting to 1.19.2 as a default, maybe the version you picked isn't compatable with this version of PyPacker or input wrong?")
+            
+            #filepath
+            global filePath
+            if settings[1] != "local":
+                if bool(os.path.exists(settings[1])) == True:
                     filePath = settings[1]
-                    print("chosen filepath:" + filePath)
-                
-                #color
-                if settings[2] == True:
-                    print("colored text off")
-                else:
-                    print("colored text on")
-                
-                print("end settings messages\n\n")
-                
-            except:
-                print("error while handling settings, some errors might occour later, loading default settings:\n1.19.2\nlocal file output\ncolors off")
-                utils.load_defaults()
+                    if settings[3] != "False":
+                        print(f"chosen filepath: {filePath}")
+            else:
+                filePath = utils.LocalFiles(self) + "\output"
+                if settings[3] != "False":
+                    print(f'output filepath set to "local", aka: {filePath}')     
+                                    
         else:
-            print("settings.txt file does not exist, some errors might occour later, loading default settings:\n1.19.2\nlocal file output\ncolors off\n")
-            utils.load_defaults()
+            utils.load_defaults(self)
+            print('No "settings.txt" file exists in this programs directory, one will automatically be created, but it will be set to built in defaults.')
         
+   
+        if settings[3] != "False":
+            print(f"{BYELLOW}{BLACK}end debug messages\n{RESET}")
 
     def main():
         #text colors:
@@ -193,11 +146,10 @@ class main: #the main program
         #   options: BWHITE, BLACK
         #   user input: RESET, CYAN
         #settings: (also a settings.txt explanation)
-        #   default version (set to 1.19.2 by default)
-        #   default file location (set to local by default)
-        #   color toggle
-        #   first login (with a reset button in case a package or this breaks, useless atm)
-        #   debug mode (also useless atm)
+        #   default version ("1.19.2" by default)
+        #   default file location ("local" by default)
+        #   move or copy files when creating resource packs ("Move" by default)
+        #   display debug args ("False" by default)
         #opens:
         #   DPfiles() for datapacks
         #   RPfiles() for resrouce packs/texture packs
@@ -207,11 +159,10 @@ class main: #the main program
         #mc utils:
         #   portal cords, 3d space, and circle calculators all in one
         
-        print(BGREEN + 'Welcome to PyPacker! Where would you like to start?\n(Case sensitve, all lowercase; "open" and "output" not guaranteed to work on all Lunix distros)' + RESET)
-        #"[name] > [command]"+ RESET +"\n"+ BWHITE + BLACK + paste this between a "black+" and begining of the next command name.
+        print(f'{BGREEN}Welcome to PyPacker! Where would you like to start?\n(Case sensitve, all lowercase; "open" and "out" not guaranteed to work on all Lunix distros){RESET}')
         validMain = "stay"
         while validMain == "stay":
-            lastMain = input(BWHITE + BLACK + "Open Program Folder > open"+ RESET +"\n"+ BWHITE + BLACK + "Open Output Folder > out"+ RESET +"\n"+ BWHITE + BLACK +"Settings Menu > settings"+ RESET +"\n"+ BWHITE + BLACK +"Launch Datapack File Generator > dpfiles"+ RESET +"\n"+ BWHITE + BLACK +"Quit PyPacker > quit\n" + RESET + "\n" + CYAN)
+            lastMain = input(f"{BWHITE}{BLACK}Open Program Folder > open{RESET}\n{BWHITE}{BLACK}Open Output Folder > out{RESET}\n{BWHITE}{BLACK}Settings Menu > settings{RESET}\n{BWHITE}{BLACK}Launch Datapack File Generator > dpfiles{RESET}\n{BWHITE}{BLACK}Quit PyPacker > quit\n{RESET}\n{CYAN}")
         
             if lastMain == "open": #opens the program file location
                 if sys.platform=='win32':
@@ -253,12 +204,17 @@ class main: #the main program
                 input(RESET + BYELLOW + "Press enter to quit." + RESET + "\n")
                 sys.exit()
             
+            elif lastMain == "restart": #closes the program
+                input(RESET + BYELLOW + "Press enter to restart PyPacker." + RESET + "\n")
+                os.startfile(sys.argv[0])
+                sys.exit()
+            
             elif lastMain == "": #fixes a stupid bug that spams the custom error below
                 return
                             
             else:
                 print(RESET + RED + "Invalid argument. Please send a valid word.\n" + RESET + CYAN + "\n")
-        
+            
 class files: #file makers
     def __init__():
         pass
@@ -356,7 +312,7 @@ class files: #file makers
             os.mkdir("noise_settings")
             os.mkdir("processor_list")
             os.mkdir("template_pool")
-            lastDP = input(RESET + BGREEN + "Your datapack has been generated! What do you want to do?" + RESET + "\n" + BWHITE + BLACK + "Open folder > open\nQuit PyPacker > quit" + RESET + "\n" + BWHITE + BLACK + "Edit Datapack > Edit" + RESET + CYAN + "\n\n")
+            lastDP = input(RESET + BGREEN + "Your datapack has been generated! What do you want to do?" + RESET + "\n" + BWHITE + BLACK + "Open folder > open\nQuit PyPacker > quit" + RESET + "\n" + BWHITE + BLACK + "Edit Datapack > edit" + RESET + CYAN + "\n\n")
             time.sleep(10)
             validDP = "false"
             while validDP == "false":
@@ -420,10 +376,9 @@ class editors: #file editors, notes here going forward
     
     def __init__(self):
         pass
-
-PPmain = main() #for settings handling
-print("PyPacker is loading!\n")
-time.sleep(0.5)
-PPutils = utils()
-time.sleep(0.5)
-main.main()
+    
+if __name__ == "__main__":
+    PPutils = utils() #utils and colors, needs to be loaded first or everything breaks
+    PPmain = main() #for settings handling
+    print(f"{BYELLOW}{BLACK}PyPacker is Loading!{RESET}\n\n")
+    main.main() #launches the main menu
