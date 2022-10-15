@@ -1,41 +1,16 @@
-import sys, os, re, time #all built in, convenient
+import sys, os, re, time, ctypes #all built in, convenient
 os.system("") #why does this fix ANSI color coding? god only knows, i have no clue
+global NotWIN32
+
+if sys.platform == "win32":
+    ctypes.windll.kernel32.SetConsoleTitleW("PyPacker") #rename console window, thx stackoverflow
+    NotWIN32 = False
+else:
+    NotWIN32 = True
 
 class utils: #startup and other universal utils
     def __init__(self):
-        global BLACK
-        global RED
-        global BRED
-        global GREEN
-        global BGREEN
-        global YELLOW
-        global BYELLOW
-        global BLUE
-        global MAGENTA
-        global BMAGENTA
-        global CYAN
-        global WHITE
-        global BWHITE
-        global RESET
-        global BOLD
-        global UNDERLINE
-        BLACK = '\u001b[30m'
-        RED = '\u001b[31m'
-        BRED = '\u001b[41;1m'
-        GREEN = '\u001b[32m'
-        BGREEN = '\u001b[42;1m'
-        YELLOW = '\033[92m'
-        BYELLOW = '\u001b[43;1m'
-        BLUE = '\u001b[34m'
-        MAGENTA = '\u001b[35m'
-        BMAGENTA = '\u001b[45;1m'
-        CYAN = '\u001b[36;1m'
-        WHITE = '\u001b[37m'
-        BWHITE = '\u001b[47;1m'
-        RESET = "\u001b[0m"
-        BOLD = '\033[1m'
-        UNDERLINE = '\033[4m'
-
+        pass
 
     global mineVersions
     mineVersions = { #Every MC version this is compatable with
@@ -81,12 +56,19 @@ class utils: #startup and other universal utils
                 except:
                     tryPathTemp += 1
     
-    def load_defaults():
+    def LoadDefaults():
         settings.append("1.19.2")
         settings.append("local")
         settings.append("Move")
         settings.append("True")
     
+    def ClearConsole():
+        if sys.platform=='win32':
+            os.system('cls')
+
+        if sys.platform=='darwin':
+            os.system('clear')
+        
 class main: #the main program
     def __init__(self):
         
@@ -94,75 +76,113 @@ class main: #the main program
         global settings
         settings = []
         
-        if bool(os.path.exists(utils.LocalFiles(self) + "\settings.txt")) == True:
+        SettingsCompute = "check"
+        while SettingsCompute == "check":
+            if bool(os.path.exists(utils.LocalFiles(self) + "\settings.txt")) == True:
 
-            openTXT = utils.LocalFiles(self) + "\settings.txt"
+                openTXT = utils.LocalFiles(self) + "\settings.txt"
 
-            with open(openTXT,"r") as f:
-                data = f.readlines() #readlines() returns a list of items in said file
+                with open(openTXT,"r") as f:
+                    data = f.readlines() #readlines() returns a list of items in said file
 
-            for i in range(0, len(data)): #list loop, the console is (unintentionally) spammed for a bit
-                settings.append(data[i].strip('\n'))
+                for i in range(0, len(data)): #list loop, the console is (unintentionally) spammed for a bit
+                    settings.append(data[i].strip('\n'))
+                    
+                f.close()
                 
-            f.close()
-            
-            if settings[3] != "False":
-                print(f"start debug messages:\n{openTXT}\n{data}\n{settings}")
-            
-            #settings handlers:
-            
-            #version
-            if settings[0] in mineVersions:
-                if settings[3] != "False":
-                    print(f'set default version to: {settings[0]}')
-            else:
-                settings[0] = "1.19.2"
-                print(f"error while setting default version, setting to 1.19.2 as a default, maybe the version you picked isn't compatable with this version of PyPacker or input wrong?")
-            
-            #filepath
-            global filePath
-            if settings[1] != "local":
-                if bool(os.path.exists(settings[1])) == True:
-                    filePath = settings[1]
+                #settings handlers:
+                
+                #colors
+                global BLACK
+                global RED
+                global BRED
+                global GREEN
+                global BGREEN
+                global YELLOW
+                global BYELLOW
+                global BLUE
+                global MAGENTA
+                global BMAGENTA
+                global CYAN
+                global WHITE
+                global BWHITE
+                global RESET
+                global BOLD
+                global UNDERLINE
+                BLACK, RED, BRED, GREEN, BGREEN, YELLOW, BYELLOW, BLUE, MAGENTA, BMAGENTA, CYAN, WHITE, BWHITE, RESET, BOLD, UNDERLINE = "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
+                
+                
+                if settings[4] == "True":
+                    BLACK = '\u001b[30m'
+                    RED = '\u001b[31m'
+                    BRED = '\u001b[41;1m'
+                    GREEN = '\u001b[32m'
+                    BGREEN = '\u001b[42;1m'
+                    YELLOW = '\033[92m'
+                    BYELLOW = '\u001b[43;1m'
+                    BLUE = '\u001b[34m'
+                    MAGENTA = '\u001b[35m'
+                    BMAGENTA = '\u001b[45;1m'
+                    CYAN = '\u001b[36;1m'
+                    WHITE = '\u001b[37m'
+                    BWHITE = '\u001b[47;1m'
+                    RESET = "\u001b[0m"
+                    BOLD = '\033[1m'
+                    UNDERLINE = '\033[4m'
+                
+                #version
+                if settings[0] in mineVersions:
                     if settings[3] != "False":
-                        print(f"chosen filepath: {filePath}")
+                        print(f'set default version to: {settings[0]}')
+                else:
+                    settings[0] = "1.19.2"
+                    print(f"error while setting default version, setting to 1.19.2 as a default, maybe the version you picked isn't compatable with this version of PyPacker or input wrong?")
+                
+                #filepath
+                global filePath
+                if settings[1] != "local":
+                    if bool(os.path.exists(settings[1])) == True:
+                        filePath = settings[1]
+                        if settings[3] != "False":
+                            print(f"chosen filepath: {filePath}")
+                else:
+                    filePath = utils.LocalFiles(self) + "\output"
+                    if settings[3] != "False":
+                        print(f'output filepath set to "local", aka: {filePath}')
+                        
+                SettingsCompute = "Done!"
+                                        
             else:
-                filePath = utils.LocalFiles(self) + "\output"
-                if settings[3] != "False":
-                    print(f'output filepath set to "local", aka: {filePath}')     
-                                    
-        else:
-            utils.load_defaults(self)
-            print('No "settings.txt" file exists in this programs directory, one will automatically be created, but it will be set to built in defaults.')
+                utils.load_defaults(self)
+                print(f'{BYELLOW}{BLACK}No "settings.txt" file exists in this programs directory, one will automatically be created, but it will be set to built in defaults.{RESET}')
+                os.chdir(utils.LocalFiles(self))
+                with open("settings.txt", "x") as MakeNew:
+                    MakeNew.write("1.19.2\nlocal\nMove\nFalse\nTrue")
+                    MakeNew.close()
         
+        if settings[3] != "False":
+            print(f"{BYELLOW}{BLACK}start debug messages:\n{openTXT}\n{data}\n{settings}{RESET}")
    
         if settings[3] != "False":
             print(f"{BYELLOW}{BLACK}end debug messages\n{RESET}")
 
+        if NotWIN32 != False:
+            print(f"{BYELLOW}{BLACK}It seems the system is not a Windows system, expect compatablity issues\n{RESET}")
+        
     def main():
-        #text colors:
-        #   user information: BGREEN, BLACK
-        #   debug information: BYELLOW, BLACK
-        #   options: BWHITE, BLACK
-        #   user input: RESET, CYAN
-        #settings: (also a settings.txt explanation)
-        #   default version ("1.19.2" by default)
-        #   default file location ("local" by default)
-        #   move or copy files when creating resource packs ("Move" by default)
-        #   display debug args ("False" by default)
-        #opens:
-        #   DPfiles() for datapacks
-        #   RPfiles() for resrouce packs/texture packs
-        #   SCfiles() for scarpet files
-        #editors:
-        #   Dp, Rp, and Sc editors are
-        #mc utils:
-        #   portal cords, 3d space, and circle calculators all in one
         
         print(f'{BGREEN}Welcome to PyPacker! Where would you like to start?\n(Case sensitve, all lowercase; "open" and "out" not guaranteed to work on all Lunix distros){RESET}')
-        validMain = "stay"
-        while validMain == "stay":
-            lastMain = input(f"{BWHITE}{BLACK}Open Program Folder > open{RESET}\n{BWHITE}{BLACK}Open Output Folder > out{RESET}\n{BWHITE}{BLACK}Settings Menu > settings{RESET}\n{BWHITE}{BLACK}Launch Datapack File Generator > dpfiles{RESET}\n{BWHITE}{BLACK}Quit PyPacker > quit\n{RESET}\n{CYAN}")
+        
+        validMain = "mainmenu"
+        while validMain == "mainmenu":
+            lastMain = input(f"{BGREEN}PyPacker Main Menu{RESET}\n"
+                             f"{BWHITE}{BLACK}Open Program Folder > open{RESET}\n"
+                             f"{BWHITE}{BLACK}Open Output Folder > out{RESET}\n"
+                             f"{BWHITE}{BLACK}Settings Menu > settings{RESET}\n"
+                             f"{BWHITE}{BLACK}File Generators > files{RESET}\n"
+                             f"{BWHITE}{BLACK}Pack Editors > edit{RESET}\n"
+                             f"{BWHITE}{BLACK}Quit PyPacker > quit\n{RESET}\n"
+                             f"{CYAN}") #the input text will be cyan
         
             if lastMain == "open": #opens the program file location
                 if sys.platform=='win32':
@@ -172,7 +192,7 @@ class main: #the main program
                     os.system("open " + utils.LocalFiles(""))
 
                 print(RESET + BYELLOW + "Program File has been opened, choose another option." + RESET + CYAN + "\n")
-                
+                utils.ClearConsole()
                 
             elif lastMain == "out": #attempts to open the program output file location
                 if sys.platform=='win32':
@@ -182,38 +202,47 @@ class main: #the main program
                     os.system("open " + filePath)
 
                 print(RESET + BYELLOW + "Output File has been opened, choose another option." + RESET + CYAN + "\n")
-                
+                utils.ClearConsole()
                 
             elif lastMain == "settings": #settings page
                 print(RESET + BYELLOW + "settings not impelmented yet" + RESET + CYAN)
-            
-            elif lastMain == "utils": #commonly used utils
-                return
-            
-            elif lastMain == "dpfiles": #datapack file creator
-                print(RESET + BYELLOW + "launching DP file generator" + RESET + CYAN)
-                lastMain = "leave menu"
-                files.DPfiles()
+                utils.ClearConsole()
                 
-            elif lastMain == "rpfiles": #resourcepack file creator
+            elif lastMain == "utils": #commonly used utils
+                print("")
+                utils.ClearConsole()
+            
+            elif lastMain == "files": #datapack file creator
+                lastMain = "filecreate"
+                while validMain == "filecreate":
+                    pass
+                #files.DPfiles()
+                
+            elif lastMain == "edit": #resourcepack file creator
                 print(RESET + BYELLOW + "launching RP file generator" + RESET + CYAN)
-                lastMain = "leave menu"
-                files.RPfiles()
+                lastMain = "editors"
+                while validMain == "editors":
+                    pass
+                #files.RPfiles()
             
             elif lastMain == "quit": #closes the program
                 input(RESET + BYELLOW + "Press enter to quit." + RESET + "\n")
+                utils.ClearConsole()
                 sys.exit()
             
             elif lastMain == "restart": #closes the program
                 input(RESET + BYELLOW + "Press enter to restart PyPacker." + RESET + "\n")
                 os.startfile(sys.argv[0])
+                utils.ClearConsole()
                 sys.exit()
             
             elif lastMain == "": #fixes a stupid bug that spams the custom error below
-                return
+                pass
                             
             else:
-                print(RESET + RED + "Invalid argument. Please send a valid word.\n" + RESET + CYAN + "\n")
+                utils.ClearConsole()
+                print(f"{RESET}{RED}Invalid argument. Please send a valid input.\n{RESET}\n")
+                
             
 class files: #file makers
     def __init__():
@@ -376,9 +405,32 @@ class editors: #file editors, notes here going forward
     
     def __init__(self):
         pass
-    
+
+#project formating and plans (moved from main.main() for convenience)    
+#text colors:
+#   user information: BGREEN, BLACK
+#   debug information: BYELLOW
+#   options: BWHITE, BLACK
+#   user input: RESET, CYAN
+#settings: (also a settings.txt explanation)
+#   default version ("1.19.2" by default)
+#   default file location ("local" by default)
+#   move or copy files when creating resource packs ("Move" by default)
+#   display debug args ("False" by default)
+#file creators:
+#   DPfiles() for datapacks
+#   RPfiles() for resource packs/texture packs
+#   SCfiles() for scarpet files
+#editors:
+#   DPedit() DataPack Editor
+#   RPedit() Resource Pack Editor, adding indivual files then ziping it without the need of WinRAR
+#   SCedit() Scarpet Editor, Carpet Mod API coding lanuage 
+#   MinDust() an idea i had for a Mindustry Processor editor with the same codebase as SCedit(), not sure it it would fit but i might add it if i have time
+#mc utils:
+#   portal cords (easy), 3d space, and circle calculators all in one (those last two ill use MatPlotLib i think)
+
 if __name__ == "__main__":
     PPutils = utils() #utils and colors, needs to be loaded first or everything breaks
     PPmain = main() #for settings handling
-    print(f"{BYELLOW}{BLACK}PyPacker is Loading!{RESET}\n\n")
+    print(f"{BYELLOW}PyPacker is Loading!{RESET}\n\n")
     main.main() #launches the main menu
