@@ -1,5 +1,5 @@
 1.19.2
 local
-Move
+Copy
 False
-True
+False
