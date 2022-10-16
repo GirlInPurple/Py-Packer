@@ -1,12 +1,10 @@
 import sys, os, re, time, ctypes #all built in, convenient
 os.system("") #why does this fix ANSI color coding? god only knows, i have no clue
-global NotWIN32
 
+#window customisation, breaks VScode
+os.system('mode con: cols=100 lines=40')
 if sys.platform == "win32":
     ctypes.windll.kernel32.SetConsoleTitleW("PyPacker") #rename console window, thx stackoverflow
-    NotWIN32 = False
-else:
-    NotWIN32 = True
 
 class utils: #startup and other universal utils
     def __init__(self):
@@ -55,12 +53,6 @@ class utils: #startup and other universal utils
                     break
                 except:
                     tryPathTemp += 1
-    
-    def LoadDefaults():
-        settings.append("1.19.2")
-        settings.append("local")
-        settings.append("Move")
-        settings.append("True")
     
     def ClearConsole():
         if sys.platform=='win32':
@@ -153,7 +145,6 @@ class main: #the main program
                 SettingsCompute = "Done!"
                                         
             else:
-                utils.load_defaults(self)
                 print(f'{BYELLOW}{BLACK}No "settings.txt" file exists in this programs directory, one will automatically be created, but it will be set to built in defaults.{RESET}')
                 os.chdir(utils.LocalFiles(self))
                 with open("settings.txt", "x") as MakeNew:
@@ -165,9 +156,6 @@ class main: #the main program
    
         if settings[3] != "False":
             print(f"{BYELLOW}{BLACK}end debug messages\n{RESET}")
-
-        if NotWIN32 != False:
-            print(f"{BYELLOW}{BLACK}It seems the system is not a Windows system, expect compatablity issues\n{RESET}")
         
     def main():
         
@@ -175,14 +163,15 @@ class main: #the main program
         
         validMain = "mainmenu"
         while validMain == "mainmenu":
-            lastMain = input(f"{BGREEN}PyPacker Main Menu{RESET}\n"
+            lastMain = input(f"{BGREEN}{WHITE}PyPacker Main Menu{RESET}\n"
                              f"{BWHITE}{BLACK}Open Program Folder > open{RESET}\n"
                              f"{BWHITE}{BLACK}Open Output Folder > out{RESET}\n"
                              f"{BWHITE}{BLACK}Settings Menu > settings{RESET}\n"
                              f"{BWHITE}{BLACK}File Generators > files{RESET}\n"
                              f"{BWHITE}{BLACK}Pack Editors > edit{RESET}\n"
+                             f"{BWHITE}{BLACK}Basic Utilities > utils{RESET}\n"
                              f"{BWHITE}{BLACK}Quit PyPacker > quit\n{RESET}\n"
-                             f"{CYAN}") #the input text will be cyan
+                             f"{CYAN}") #the input text will be cyan, also really easy to add extra stuff to
         
             if lastMain == "open": #opens the program file location
                 if sys.platform=='win32':
