@@ -1,5 +1,8 @@
 1.19.2
 local
-Copy
+Move
 False
 False
+notepad /a
+mspaint
+start Audacity
