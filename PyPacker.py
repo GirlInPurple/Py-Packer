@@ -1,4 +1,4 @@
-import sys, os, re, time, ctypes, webbrowser #all built in, convenient
+import sys, os, re, time, ctypes, webbrowser, urllib.request #all built in, convenient
 os.system("") #why does this fix ANSI color coding? god only knows, i have no clue
 
 #window customisation, breaks VScode
@@ -8,9 +8,7 @@ if sys.platform == "win32":
 
 class utils: #startup and other universal utils
     def __init__(self):
-        
-        global ColorINIT
-        ColorINIT = "done!"
+        pass
 
     global mineVersions
     mineVersions = { #Every MC version this is compatable with
@@ -62,6 +60,12 @@ class utils: #startup and other universal utils
 
         if sys.platform=='darwin':
             os.system('clear')
+            
+    def EditSettings(self, pos, value):
+        settings[pos] = value
+        with open(openTXT, "w") as appendSettings:
+            appendSettings.write(settings[0] + "\n" + settings[1] + "\n" + settings[2] + "\n" + settings[3] + "\n" + settings[4] + "\n" + settings[5] + "\n" + settings[6] + "\n" + settings[7] + "\n" + settings[8])
+            appendSettings.close()
         
 class main: #the main program
     def __init__(self):
@@ -86,72 +90,52 @@ class main: #the main program
         data = []
         global settings
         settings = []
+
+        global openTXT
+        openTXT = utils.LocalFiles(self) + "\settings.txt"   
         
-        SettingsCompute = "check"
-        while SettingsCompute == "check":
-            if bool(os.path.exists(utils.LocalFiles(self) + "\settings.txt")) == True:
-                
-                global openTXT
-                openTXT = utils.LocalFiles(self) + "\settings.txt"
+        with open(openTXT,"r") as f:
+            data = f.readlines() #readlines() returns a list of items in said file
 
-                with open(openTXT,"r") as f:
-                    data = f.readlines() #readlines() returns a list of items in said file
-
-                for i in range(0, len(data)): #list loop, the console is (unintentionally) spammed for a bit
-                    settings.append(data[i].strip('\n'))
-                    
-                f.close()
-                
-                #settings handlers:
-                
-                #debug
-                global txtlocations
-                if settings[3] == "True":
-                    txtlocations = ["(txtlocation: line 1)", "(txtlocation: line 2)", "(txtlocation: line 3)", "(txtlocation: line 4)", "(txtlocation: line 5)", "(txtlocation: line 6)", "(txtlocation: line 7)", "(txtlocation: line 8)", "(txtlocation: line 9)"]
-                else:
-                    txtlocations = ['','','','','','','','','',]
-                
-                #colors
-                if settings[4] == "True":
-                    BLACK, RED, BRED, GREEN, BGREEN, YELLOW, BYELLOW, BLUE, MAGENTA, BMAGENTA, CYAN, WHITE, BWHITE, RESET, BOLD, UNDERLINE = "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-                
-                #version
-                if settings[0] in mineVersions:
-                    if settings[3] != "False":
-                        print(f'set default version to: {settings[0]}')
-                else:
-                    settings[0] = "1.19.2"
-                    print(f"error while setting default version, setting to 1.19.2 as a default, maybe the version you picked isn't compatable with this version of PyPacker or input wrong?")
-                
-                #filepath
-                global filePath
-                if settings[1] != "local":
-                    if bool(os.path.exists(settings[1])) == True:
-                        filePath = settings[1]
-                        if settings[3] != "False":
-                            print(f"chosen filepath: {filePath}")
-                else:
-                    filePath = utils.LocalFiles(self) + "\output"
-                    if settings[3] != "False":
-                        print(f'output filepath set to "local", aka: {filePath}')
-                        
-                SettingsCompute = "Done!"
-                                        
-            else:
-                print(f'{BYELLOW}{BLACK}No "settings.txt" file exists in this programs directory, one will automatically be created, but it will be set to built in defaults.{RESET}')
-                os.chdir(utils.LocalFiles(self))
-                with open("settings.txt", "x") as NewSettings:
-                    NewSettings.write("1.19.2\nlocal\nMove\nFalse\nFalse")
-                    NewSettings.close()
-
-            if bool(os.path.exists(utils.LocalFiles(self) + "\output")) != True:
-                print(f'{BYELLOW}{BLACK}No "output" folder exists in this programs directory, one will automatically be created.{RESET}')
-                os.chdir(utils.LocalFiles(self))
-                with open("output", "x") as NewOutput:
-                    NewOutput.close()
-                
+        for i in range(0, len(data)): #list loop, the console is (unintentionally) spammed for a bit
+            settings.append(data[i].strip('\n'))
+            
+        f.close()
+        
+        #settings handlers:
         if settings[3] != "False":
             print(f"{BYELLOW}{WHITE}start debug messages:\n{openTXT}\n{data}\n{settings}{RESET}")
+        
+        #debug
+        global txtlocations
+        if settings[3] == "True":
+            txtlocations = ["(txtlocation: line 1)", "(txtlocation: line 2)", "(txtlocation: line 3)", "(txtlocation: line 4)", "(txtlocation: line 5)", "(txtlocation: line 6)", "(txtlocation: line 7)", "(txtlocation: line 8)", "(txtlocation: line 9)"]
+        else:
+            txtlocations = ['','','','','','','','','',]
+        
+        #colors
+        if settings[4] == "True":
+            BLACK, RED, BRED, GREEN, BGREEN, YELLOW, BYELLOW, BLUE, MAGENTA, BMAGENTA, CYAN, WHITE, BWHITE, RESET, BOLD, UNDERLINE = "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
+        
+        #version
+        if settings[0] in mineVersions:
+            if settings[3] != "False":
+                print(f'set default version to: {settings[0]}')
+        else:
+            settings[0] = "1.19.2"
+            print(f"error while setting default version, setting to 1.19.2 as a default, maybe the version you picked isn't compatable with this version of PyPacker or input wrong?")
+        
+        #filepath
+        global filePath
+        if settings[1] != "local":
+            if bool(os.path.exists(settings[1])) == True:
+                filePath = settings[1]
+                if settings[3] != "False":
+                    print(f"chosen filepath: {filePath}")
+        else:
+            filePath = utils.LocalFiles(self) + "\output"
+            if settings[3] != "False":
+                print(f'output filepath set to "local", aka: {filePath}')
    
         if settings[3] != "False":
             print(f"{BYELLOW}{WHITE}end debug messages\n{RESET}")
@@ -162,16 +146,19 @@ class main: #the main program
         
         validMain = "mainmenu"
         while validMain == "mainmenu":
-            lastMain = input(f"{BGREEN}{WHITE}PyPacker Main Menu{RESET}\n"
-                             f"{BWHITE}{BLACK}Open Program Folder > open {RESET}\n"
-                             f"{BWHITE}{BLACK}Open Output Folder > out {RESET}\n"
-                             f"{BWHITE}{BLACK}Settings Menu > set {RESET}\n"
-                             f"{BWHITE}{BLACK}External Links > link {RESET}\n"
-                             f"{BWHITE}{BLACK}File Generators > files {RESET}\n"
-                             f"{BWHITE}{BLACK}Pack Editors > edit {RESET}\n"
-                             f"{BWHITE}{BLACK}Quit PyPacker > quit {RESET}\n"
-                             f"{BWHITE}{BLACK}Restart PyPacker > restart {RESET}\n\n"
-                             f"{CYAN}") #the input text will be cyan, also really easy to add extra stuff to
+            if settings[8] != "0":
+                lastMain = input(f"{BGREEN}{WHITE}PyPacker Main Menu{RESET}\n"
+                                f"{BWHITE}{BLACK}Open Program Folder > open {RESET}\n"
+                                f"{BWHITE}{BLACK}Open Output Folder > out {RESET}\n"
+                                f"{BWHITE}{BLACK}Settings Menu > set {RESET}\n"
+                                f"{BWHITE}{BLACK}External Links > link {RESET}\n"
+                                f"{BWHITE}{BLACK}File Generators > files {RESET}\n"
+                                f"{BWHITE}{BLACK}Pack Editors > edit {RESET}\n"
+                                f"{BWHITE}{BLACK}Quit PyPacker > quit {RESET}\n"
+                                f"{BWHITE}{BLACK}Restart PyPacker > restart {RESET}\n\n"
+                                f"{CYAN}") #the input text will be cyan, also really easy to add extra stuff to
+            else:
+                lastMain = "set"
         
             if lastMain == "open": #opens the program file location
                 if sys.platform=='win32':
@@ -194,35 +181,45 @@ class main: #the main program
                 utils.ClearConsole()
                 
             elif lastMain == "set": #settings page
+                
+                global RestartNess1
+                global RestartNess2
                 RestartNess1 = ""
                 RestartNess2 = "Back to Main Menu"
+                
                 validMain = "settings"
                 while validMain == "settings":
                     utils.ClearConsole()
-                    lastMain = input(f'{BGREEN}{WHITE}PyPacker Settings{BRED}{RestartNess1}{RESET}\n{BGREEN}{WHITE}("{BRED}{WHITE}[N]{BGREEN}{WHITE}" means that setting is nessasary to run the program.{RESET}\n'
-                                     
-                                     f'{BGREEN}{WHITE}File Settings:{RESET}\n'
-                                     f'{BWHITE}{BLACK}Output File > out (currently: {filePath}){txtlocations[1]}{BRED}{WHITE}[N]{RESET}\n'
-                                     f'{BWHITE}{BLACK}Move or Copy Files > mocy (currently: {settings[2]}){txtlocations[2]}{BRED}{WHITE}[N]{RESET}\n'
-                                     #f'{BWHITE}{BLACK}Minecraft /assets Directory > dir (currently: ){txtlocations[]}{RESET}\n'
-                                     
-                                     f'{BGREEN}{WHITE}Text Settings:{RESET}\n'
-                                     f'{BWHITE}{BLACK}Show Debug Messages > debug (currently: {settings[3]}){txtlocations[3]}{BRED}{WHITE}[N]{RESET}\n'
-                                     f'{BWHITE}{BLACK}Disable ANSI+Unicode text > color (currently: {settings[4]}){txtlocations[4]}{BRED}{WHITE}[N]{RESET}\n'
-                                     
-                                     f'{BGREEN}{WHITE}Customization Settings:{RESET}\n'
-                                     f'{BWHITE}{BLACK}Saved Default Version > ver (currently: {settings[0]}){txtlocations[0]}{BRED}{WHITE}[N]{RESET}\n'
-                                     f'{BWHITE}{BLACK}Text Editor > text (currently: ){txtlocations[5]}{RESET}\n'
-                                     f'{BWHITE}{BLACK}Texture Editor > img (currently: ){txtlocations[6]}{RESET}\n'
-                                     f'{BWHITE}{BLACK}Audio Editor> audio (currently: ){txtlocations[7]}{RESET}\n'
-                                     
-                                     f'{BGREEN}{WHITE}Miscellaneous:{RESET}\n'
-                                     f'{BWHITE}{BLACK}Open Settings.TXT > open (useful for manual tinkering){RESET}\n'
-                                     f'{BWHITE}{BLACK}In-Depth Explantion > exp {RESET}\n'
-                                     f'{BWHITE}{BLACK}{RestartNess2} > quit {RESET}\n\n'
-                                     f'{CYAN}')
+                    
+                    if settings[8] == "0":
+                        RestartNess1 = '(A restart is nessasary for these changes to take place. Enter "quit" to continue)'
+                        RestartNess2 = 'Restart PyPacker'
+                        print(f'{BYELLOW}{WHITE}It seems like this is your first time using PyPacker, check these settings and type "quit" to continue.{RESET}')
+                    
+                    lastMain = input(f'{BGREEN}{WHITE}PyPacker Settings{BRED}{RestartNess1}{RESET}\n{BGREEN}{WHITE}("{BRED}{WHITE}[N]{BGREEN}{WHITE}" means that setting is nessasary to run the program.){RESET}\n'
+                                    f'{BGREEN}{WHITE}File Settings:{RESET}\n'
+                                    f'{BWHITE}{BLACK}Output File > out (currently: {filePath}){txtlocations[1]}{BRED}{WHITE}[N]{RESET}\n'
+                                    f'{BWHITE}{BLACK}Move or Copy Files > mocy (currently: {settings[2]}){txtlocations[2]}{BRED}{WHITE}[N]{RESET}\n'
+                                    #f'{BWHITE}{BLACK}Minecraft /assets Directory > dir (currently: ){txtlocations[]}{RESET}\n' depricated option
+                                    
+                                    f'{BGREEN}{WHITE}Text Settings:{RESET}\n'
+                                    f'{BWHITE}{BLACK}Show Debug Messages > debug (currently: {settings[3]}){txtlocations[3]}{BRED}{WHITE}[N]{RESET}\n'
+                                    f'{BWHITE}{BLACK}Disable ANSI+Unicode text > color (currently: {settings[4]}){txtlocations[4]}{BRED}{WHITE}[N]{RESET}\n'
+                                    
+                                    f'{BGREEN}{WHITE}Customization Settings:{RESET}\n'
+                                    f'{BWHITE}{BLACK}Saved Default Version > ver (currently: {settings[0]}){txtlocations[0]}{BRED}{WHITE}[N]{RESET}\n'
+                                    f'{BWHITE}{BLACK}Text Editor > text (currently: {settings[5]}){txtlocations[5]}{RESET}\n'
+                                    f'{BWHITE}{BLACK}Texture Editor > img (currently: {settings[6]}){txtlocations[6]}{RESET}\n'
+                                    f'{BWHITE}{BLACK}Audio Editor> audio (currently: {settings[7]}){txtlocations[7]}{RESET}\n'
+                                    
+                                    f'{BGREEN}{WHITE}Miscellaneous:{RESET}\n'
+                                    f'{BWHITE}{BLACK}Open Settings.TXT > open (useful for manual tinkering){RESET}\n'
+                                    f'{BWHITE}{BLACK}In-Depth Explantion > exp {RESET}\n'
+                                    f'{BWHITE}{BLACK}{RestartNess2} > quit {RESET}\n\n'
+                                    f'{CYAN}')
                     
                     if lastMain == "out":
+                        FilePathSettings = 0
                         utils.ClearConsole()
                         validMain = "choose out"
                         while validMain == "choose out":
@@ -231,14 +228,16 @@ class main: #the main program
                                 
                                 if bool(os.path.exists(SettingsTemp)) == True:  
                                     print(f'{BYELLOW}{WHITE}Your chosen filepath exists and has been added to the settings file{RESET}\n\n')
+                                    FilePathSettings = 1
                                     
                                 elif SettingsTemp == "local":
                                         print(f'{BYELLOW}{WHITE}Your chosen filepath exists and has been added to the settings file{RESET}\n\n')
-                                        
-                                with open(openTXT, "w") as appendSettings:
-                                    appendSettings.write(f"{settings[0]}\n{SettingsTemp}\n{settings[2]}\n{settings[3]}\n{settings[4]}")
-                                    appendSettings.close()
-                            
+                                        FilePathSettings = 1
+                                else:
+                                    pass
+                            if FilePathSettings == 1:            
+                                utils.EditSettings("", 1, SettingsTemp)
+                                
                             RestartNess1 = '(A restart is nessasary for these changes to take place. Enter "quit" to continue)'
                             RestartNess2 = 'Restart PyPacker'        
                             validMain = "settings"
@@ -256,9 +255,7 @@ class main: #the main program
 
                             if SettingsTemp != "quit":
                                 if SettingsTemp == "Move" or "Copy" or "Choose":
-                                    with open(openTXT, "w") as appendSettings:
-                                        appendSettings.write(f"{settings[0]}\n{settings[1]}\n{SettingsTemp}\n{settings[3]}\n{settings[4]}")
-                                        appendSettings.close()
+                                    utils.EditSettings("", 2, SettingsTemp)
                                     print(f'{BYELLOW}{WHITE}Your choice has been added to the settings file{RESET}\n\n')
                                 else:
                                     print(f'{RESET}{RED}Invalid argument. Please send a valid input.\n{RESET}\n')
@@ -267,7 +264,7 @@ class main: #the main program
                             RestartNess2 = 'Restart PyPacker'        
                             validMain = "settings"
                             
-                    elif lastMain == "dir":
+                    elif lastMain == "dir": #depricated option
                     #    utils.ClearConsole()
                     #    validMain = "MC dir"
                     #    while validMain == "MD dir":
@@ -300,9 +297,7 @@ class main: #the main program
                             if SettingsTemp == "quit":
                                 pass
                             elif SettingsTemp == "True" or "False":
-                                with open(openTXT, "w") as appendSettings:
-                                    appendSettings.write(f"{settings[0]}\n{settings[1]}\n{settings[2]}\n{SettingsTemp}\n{settings[4]}")
-                                    appendSettings.close()
+                                utils.EditSettings("", 3, SettingsTemp)
                                 print(f'{BYELLOW}{WHITE}Your choice has been added to the settings file{RESET}\n\n')
                             else:
                                 print(f'{RESET}{RED}Invalid argument. Please send a valid input.\n{RESET}\n')
@@ -317,8 +312,26 @@ class main: #the main program
                             print("")
                     
                     elif lastMain == "ver":
-                        pass
-                    
+                        utils.ClearConsole()
+                        validMain = "ver id"
+                        while validMain == "ver id":
+                            SettingsTemp = ""
+                            SettingsTemp = input(f'{BGREEN}{WHITE}Change Default Minecraft Version{RESET}\n' 
+                                                 f'{BWHITE}{BLACK}Type any version from 1.13 to 1.19.2 to set as default{RESET}\n{BWHITE}{BLACK}(not including snapshots, in that case use the nearest release version by date, then trail and error.){RESET}\n'
+                                                 f'{CYAN}\n')
+                            if SettingsTemp != "quit":
+                                if SettingsTemp in mineVersions:
+                                    utils.EditSettings("", 0, SettingsTemp)
+                                    input(f'{BYELLOW}{WHITE}You Chose: {SettingsTemp}, hit Enter to continue.{RESET}\n')
+                                    validMain = "settings"
+                                    RestartNess1 = '(A restart is nessasary for these changes to take place. Enter "quit" to continue)'
+                                    RestartNess2 = 'Restart PyPacker'
+                                else:
+                                    print(f"{RESET}{RED}Invalid argument. Please send a valid input.\n{RESET}\n")
+                            validMain = "settings"
+                            RestartNess1 = '(A restart is nessasary for these changes to take place. Enter "quit" to continue)'
+                            RestartNess2 = 'Restart PyPacker'
+                            
                     elif lastMain == "text":
                         pass
                     
@@ -330,8 +343,11 @@ class main: #the main program
                     
                     elif lastMain == "quit":
                         if RestartNess2 != "Back to Main Menu":
+                            print(f'{BYELLOW}{WHITE}These are your new settings:{settings}{RESET}')
                             input(RESET + BYELLOW + "Press enter to restart PyPacker." + RESET + "\n")
                             utils.ClearConsole()
+                            if settings[8] == "0":
+                                utils.EditSettings("", 8, "1")
                             os.startfile(sys.argv[0])
                             sys.exit()
                         else:
@@ -339,19 +355,28 @@ class main: #the main program
                             validMain = "mainmenu"
                     
                     elif lastMain == "open":
-                        pass
+                        if sys.platform=='win32':
+                            os.system(openTXT)
+
+                        if sys.platform=='darwin':
+                            os.system("cat" + openTXT)
+                    
+                        RestartNess1 = '(A restart is nessasary for these changes to take place. Enter "quit" to continue)'
+                        RestartNess2 = 'Restart PyPacker'
                     
                     elif lastMain == "exp":
-                        print(f'{BGREEN}{WHITE}Settings.TXT Manual editing explantion:{RESET}\n'
-                              f'{BWHITE}{BLACK}Line 1(0): Saved Version{RESET}\n'
-                              f'{BWHITE}{BLACK}Line 2(1): Output File{RESET}\n'
-                              f'{BWHITE}{BLACK}Line 3(2): Move or Copy when making Resource Packs{RESET}\n'
-                              f'{BWHITE}{BLACK}Line 4(3): Debug Mode{RESET}\n'
-                              f'{BWHITE}{BLACK}Line 5(4): Disable ANSI/Unicode Coloring{RESET}\n'
-                              f'{BWHITE}{BLACK}Line 6(5): Default Text Editor{RESET}\n'
-                              f'{BWHITE}{BLACK}Line 7(6): Default Texture Editor{RESET}\n'
-                              f'{BWHITE}{BLACK}Line 8(7): Default Audio Editor{RESET}\n'
-                              )
+                        utils.ClearConsole()
+                        input(f'{BGREEN}{WHITE}Settings.TXT Manual editing explantion: (first number is line in file, second number is line when processed,{RESET}\n{BGREEN}{WHITE}notes about each line are on the right){RESET}\n'
+                              f'{BWHITE}{BLACK}Line 1, 0: Saved Version (From 1.13 to 1.19.2, no snapshots){RESET}\n'
+                              f'{BWHITE}{BLACK}Line 2, 1: Output File (Must be a valid file to be accepted){RESET}\n'
+                              f'{BWHITE}{BLACK}Line 3, 2: Move or Copy when making Resource Packs{RESET}\n'
+                              f'{BWHITE}{BLACK}Line 4, 3: Debug Mode{RESET}\n'
+                              f'{BWHITE}{BLACK}Line 5, 4: Disable ANSI/Unicode Coloring (useful if ANSI coding breaks custom terminals){RESET}\n'
+                              f'{BWHITE}{BLACK}Line 6, 5: Default Text Editor (these last 3 have to be in Powershell/SUDO command form due to how PyPacker opens files){RESET}\n'
+                              f'{BWHITE}{BLACK}Line 7, 6: Default Texture Editor{RESET}\n'
+                              f'{BWHITE}{BLACK}Line 8, 7: Default Audio Editor{RESET}\n'
+                              f'{BWHITE}{BLACK}Press enter to continue.{RESET}\n'
+                              f'{CYAN}\n')
                     
                     elif lastMain == "restart":
                         input(RESET + BYELLOW + "Press enter to restart PyPacker." + RESET + "\n")
@@ -375,29 +400,33 @@ class main: #the main program
                                     f'{BWHITE}{BLACK}My Twitter > twit {RESET}\n'
                                     f'{BWHITE}{BLACK}Discord Server > disc {RESET}\n'
                                     f'{BGREEN}{WHITE}Other Links:{RESET}\n'
-                                    f'{BWHITE}{BLACK}Carpet Mod (Scarpet) Github > scar {RESET}\n'
-                                    f'{BWHITE}{BLACK}DataCreate.py > dcp {RESET}\n'
+                                    f'{BWHITE}{BLACK}Carpet Mod Github > car {RESET}\n'
+                                    f'{BWHITE}{BLACK}Scarpet Docs > scar {RESET}\n'
+                                    f'{BGREEN}{WHITE}Inspiration:{RESET}\n'
+                                    f'{BWHITE}{BLACK}DataPackGen > dpg {RESET}\n'
+                                    f'{BWHITE}{BLACK}DataCreate.py > dcp {RESET}\n\n'
                                     f'{BWHITE}{BLACK}Main Menu > quit {RESET}\n'
                                     f'{CYAN}\n\n')
                     if lastMain == "git":
                         webbrowser.open("https://github.com/GirlInPurple/Py-Packer")
-                        validMain = "mainmenu"
                         utils.ClearConsole()
                     elif lastMain == "twit":
                         webbrowser.open("https://twitter.com/blurpl3d")
-                        validMain = "mainmenu"
                         utils.ClearConsole()
                     elif lastMain == "disc":
                         webbrowser.open("https://discord.gg/2PxCfY9jRd")
-                        validMain = "mainmenu"
+                        utils.ClearConsole()
+                    elif lastMain == "car":
+                        webbrowser.open("https://github.com/gnembon/fabric-carpet")
                         utils.ClearConsole()
                     elif lastMain == "scar":
-                        webbrowser.open("https://github.com/gnembon/fabric-carpet")
-                        validMain = "mainmenu"
+                        webbrowser.open("https://github.com/gnembon/fabric-carpet/blob/master/docs/scarpet/Documentation.md")
+                        utils.ClearConsole()
+                    elif lastMain == "dpg":
+                        webbrowser.open("https://misode.github.io/")
                         utils.ClearConsole()
                     elif lastMain == "dcp":
                         webbrowser.open("https://github.com/OrigamingWasTaken/DataCreate")
-                        validMain = "mainmenu"
                         utils.ClearConsole()
                     elif lastMain == "quit":
                         validMain = "mainmenu"
@@ -436,17 +465,16 @@ class main: #the main program
             else:
                 utils.ClearConsole()
                 print(f"{RESET}{RED}Invalid argument. Please send a valid input.\n{RESET}\n")
-                
-            
+                   
 class files: #file makers
     def __init__():
         pass
     
     def DPfiles():
-        packName = input(BGREEN + 'Welcome to DataCreate! How do you want to name your datapack? (enter "quit" now to abort)' + RESET + "\n\n" + CYAN)
+        packName = input(f'{BMAGENTA}Welcome to DataCreate! How do you want to name your datapack? (enter "quit" now to abort){RESET}\n\n{CYAN}')
         if packName != "quit":
             time.sleep(0.5)
-            dataName = input(RESET + BYELLOW + "How do you want to name your namespace?" + RESET + "\n\n" + CYAN).lower()
+            dataName = input(f"{RESET}{BYELLOW}How do you want to name your namespace?{RESET}\n\n{CYAN}").lower()
             validName = "false"
             while validName == "false":
                 if(bool(re.match('^[a-zA-Z0-9_]*$',dataName))==True):
@@ -623,12 +651,8 @@ class editors: #file editors, notes here going forward
 #   MinDust() an idea i had for a Mindustry Processor editor with the same codebase as SCedit(), not sure it it would fit but i might add it if i have time
 
 if __name__ == "__main__":
-    try:
-        import pygame
-    except:
-        os.system("python3 -m pip install -U pygame")
-    utils.ClearConsole()
-    
+
+    #ansi color coding for terminals
     BLACK = '\u001b[30m'
     RED = '\u001b[31m'
     BRED = '\u001b[41;1m'
@@ -646,6 +670,35 @@ if __name__ == "__main__":
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
     
-    PPutils = utils() #utils and colors, needs to be loaded first or everything breaks
-    PPmain = main() #for settings handling
-    main.main() #launches the main menu
+    #check if settigns file exists, if not make it
+    if bool(os.path.exists(utils.LocalFiles("") + "\settings.txt")) != True:       
+        #print(f'{BYELLOW}{WHITE}No "settings.txt" file exists in this programs directory, one will automatically be created, but it will be set to built in defaults.{RESET}')
+        os.chdir(utils.LocalFiles(""))
+        with open("settings.txt", "x") as NewSettings:
+            NewSettings.write("1.19.2\nlocal\nMove\nFalse\nFalse\nnotepad /a\nmspaint\nstart Audacity\n0")
+            NewSettings.close()
+
+    #check if standard output file exists, if not make it
+    if bool(os.path.exists(utils.LocalFiles("") + "\output")) != True:
+        #print(f'{BYELLOW}{WHITE}No "output" folder exists in this programs directory, one will automatically be created.{RESET}')
+        os.chdir(utils.LocalFiles(""))
+        os.mkdir('output')
+        
+    #check if example photo exists, if not grab it from Wikipedia
+    #yes, i hit randomize a few times and found this page, a harmless building in England, perfect for this
+    #full rights to the copyright holder of this photo, if it needs to be removed i will gladly do so.
+    if bool(os.path.exists(utils.LocalFiles("") + "\Aberdeen_Tolbooth.jpg")) != True:
+        #print(f'{BYELLOW}{WHITE}No "output" folder exists in this programs directory, one will automatically be created.{RESET}')
+        imgURL = "https://upload.wikimedia.org/wikipedia/commons/6/62/Aberdeen_Tolbooth.jpg"
+        imgLOCAL = utils.LocalFiles("") + "\Aberdeen_Tolbooth.jpg"
+        urllib.request.urlretrieve(imgURL, imgLOCAL)
+    
+    #check if example audio tracks exist, if not, do nothing
+    if bool(os.path.exists("C:\Windows\Media\Alarm01")) == True:
+        print(f'')
+    
+    utils.ClearConsole() #just in case some graphichal bugs happen when starting up
+    
+    PPutils = utils() #general utils, needs to be loaded first or everything breaks
+    PPmain = main() #for settings handling and create main menu
+    main.main() #launches the UI, branches from there
