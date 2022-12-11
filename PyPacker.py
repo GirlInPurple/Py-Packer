@@ -1,3 +1,6 @@
+#this file is depricated and should be treated like it doesnt exist unless you plan on using legacy code
+#another warning appears on line 652
+
 import sys, os, re, time, ctypes, webbrowser, urllib.request #all built in, convenient
 
 class utils: #startup and other universal utils

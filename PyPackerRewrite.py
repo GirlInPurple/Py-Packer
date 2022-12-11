@@ -1,9 +1,9 @@
-import os, json, sys, ctypes, webbrowser, subprocess, urllib.request #built in imports
+import os, json, sys, ctypes, webbrowser, subprocess, urllib.request, update #built in imports
+#import pygame #non built in imports (pygame is a temporary example until one exists, then uncomment this line)
 from localization import * #localization
+#from PyPacker import utils, files #depricated as there is an overlap, but keeping for the future for legacy code/debug reasons
 
-#from PyPacker import utils, files
-
-DefaultSettingsFormat = '{"DefaultVersion": "1.19.2", "DefaultEdition": "Java","DefaultFilepath": "local", "FileMovement": "Move", "AnsiColorToggle": true, "TextEditor": "notepad /a", "ImageEditor": "mspaint", "AudioEditor": "start Audacity", "Debug": false, "MinecraftDir":""}'
+DefaultSettingsFormat = '{"DefaultVersion": "1.19.2", "DefaultEdition": "Java","DefaultFilepath": "local", "FileMovement": "Move", "AnsiColorToggle": true, "TextEditor": "notepad /a", "ImageEditor": "mspaint", "AudioEditor": "start Audacity", "Debug": false, "MinecraftDir":""}\n'
 
 try:
     class utils:
@@ -23,10 +23,10 @@ try:
             with open('json_data.json', 'w') as f:
                 f.write(SettingsData)
         
-        def DeleteStuff(Amount):
-            for Dele in len(Amount):
+        def DeleteStuff(List):
+            for Dele in len(List):
                 if sys.platform=='win32':
-                    os.system(f"del /f {Dele}")
+                    os.system(f"del /f {List[Dele]}")
                 #if sys.platform=='darwin':
                     #os.system(f"")
     class main:
@@ -161,6 +161,7 @@ try:
                         pass
                 
             utils.ClearConsole()
+            MenuingTemp = ""
             validMain = "mainmenu"
             while validMain == "mainmenu":
                     
@@ -168,7 +169,8 @@ try:
                 if MissingFiles == []:
                     MenuingInput = input(f'{BGREEN}{WHITE}Welcome to PyPacker! Where would you like to start?{RESET}\n'
                                         f"{BGREEN}{WHITE}PyPacker Main Menu:{RESET}\n"
-                                        f'{BGREEN}{WHITE}(All commands case sensitve; "open" and "out" not guaranteed to work on all Lunix distros){RESET}\n'
+                                        f'{BGREEN}{WHITE}All commands in PyPacker are case sensitve, "open" and "out" not guaranteed to work on all Lunix distros{RESET}\n'
+                                        f'{BGREEN}{WHITE}You can format "set" and "link" commands like "Command Here":"Command On Next Screen" to skip navigation{RESET}\n'
                                         
                                         f'\n{BGREEN}{WHITE}Program Folders:{RESET}\n'
                                         f"{BWHITE}{BLACK}Open Program Folder > open {RESET}\n"
@@ -189,6 +191,10 @@ try:
                     
                 else:
                     MenuingInput = "set"
+                
+                if ":" in MenuingInput:
+                    MenuingTemp = MenuingInput[4:].replace(':', '')
+                    MenuingInput = MenuingInput[:4].replace(':','')
                 
                 #Program Folders
                 if MenuingInput == "open": #opens the program file location
@@ -247,33 +253,37 @@ try:
                         else:
                             filePathDes = filePath
                         
-                        MenuingInput = input(f'{BGREEN}{WHITE}PyPacker Settings: {BRED}{RestartNess1}{RESET}\n'
-                                        f'{BGREEN}{WHITE}"{BRED}{WHITE}[N]{BGREEN}{WHITE}" means that setting is nessasary to run the program, changing any of these settings to an invalid value will cause a crash loop.{RESET}\n'
-                                        f'{BGREEN}{WHITE}Fun Fact: For debug purposes, you can use this page as a intergrated terminal, although there may be issues when trying to scroll.{RESET}\n'
-                                        
-                                        f'\n{BGREEN}{WHITE}File Settings:{RESET}\n'
-                                        f'{BWHITE}{BLACK}Output File > out (currently: {filePathDes}){BRED}{WHITE}[N]{RESET}\n'
-                                        f'{BWHITE}{BLACK}Move or Copy Files > mocy (currently: {SettingsData["FileMovement"]}){BRED}{WHITE}[N]{RESET}\n'
-                                        f'{BWHITE}{BLACK}Minecraft /assets Directory > dir (currently: {SettingsData["MinecraftDir"]}){RESET}\n'
-                                        
-                                        f'\n{BGREEN}{WHITE}Text Settings:{RESET}\n'
-                                        f'{BWHITE}{BLACK}Show Debug Messages > debug (currently: {SettingsData["Debug"]}){BRED}{WHITE}[N]{RESET}\n'
-                                        f'{BWHITE}{BLACK}Disable ANSI+Unicode text > color (currently: {SettingsData["AnsiColorToggle"]}){BRED}{WHITE}[N]{RESET}\n'
-                                        
-                                        f'\n{BGREEN}{WHITE}Customization Settings:{RESET}\n'
-                                        f'{BWHITE}{BLACK}Saved Default Version > ver (currently: {SettingsData["DefaultVersion"]}){BRED}{WHITE}[N]{RESET}\n'
-                                        f'{BWHITE}{BLACK}Saved Default Edition > edi (currently: {SettingsData["DefaultEdition"]}){BRED}{WHITE}[N]{RESET}\n'
-                                        f'{BWHITE}{BLACK}Text Editor > text (currently: {SettingsData["TextEditor"]}){RESET}\n'
-                                        f'{BWHITE}{BLACK}Texture Editor > img (currently: {SettingsData["ImageEditor"]}){RESET}\n'
-                                        f'{BWHITE}{BLACK}Audio Editor> audio (currently: {SettingsData["AudioEditor"]}){RESET}\n'
-                                        
-                                        f'\n{BGREEN}{WHITE}Miscellaneous:{RESET}\n'
-                                        f'{BWHITE}{BLACK}Open settings.json > open (Useful for manual tinkering){RESET}\n'
-                                        f'{BWHITE}{BLACK}Reset Everything > reset (Use when the program is having issues or you\'re planning to update, reset options inside){RESET}\n\n'
-                                        
-                                        f'{BWHITE}{BLACK}{RestartNess2} > quit {RESET}\n'
-                                        f'{BWHITE}{BLACK}Restart PyPacker > restart {RESET}\n'
-                                        f'{CYAN}\n')
+                        if MenuingTemp == "":
+                            MenuingInput = input(f'{BGREEN}{WHITE}PyPacker Settings: {BRED}{RestartNess1}{RESET}\n'
+                                            f'{BGREEN}{WHITE}"{BRED}{WHITE}[N]{BGREEN}{WHITE}" means that setting is nessasary to run the program, changing any of these settings to an invalid value will cause a crash loop.{RESET}\n'
+                                            f'{BGREEN}{WHITE}Fun Fact: For debug purposes, you can use this page as a intergrated terminal, although there may be issues when trying to scroll.{RESET}\n'
+                                            
+                                            f'\n{BGREEN}{WHITE}File Settings:{RESET}\n'
+                                            f'{BWHITE}{BLACK}Output File > out (currently: {filePathDes}){BRED}{WHITE}[N]{RESET}\n'
+                                            f'{BWHITE}{BLACK}Move or Copy Files > mocy (currently: {SettingsData["FileMovement"]}){BRED}{WHITE}[N]{RESET}\n'
+                                            f'{BWHITE}{BLACK}Minecraft /assets Directory > dir (currently: {SettingsData["MinecraftDir"]}){RESET}\n'
+                                            
+                                            f'\n{BGREEN}{WHITE}Text Settings:{RESET}\n'
+                                            f'{BWHITE}{BLACK}Show Debug Messages > debug (currently: {SettingsData["Debug"]}){BRED}{WHITE}[N]{RESET}\n'
+                                            f'{BWHITE}{BLACK}Disable ANSI+Unicode text > color (currently: {SettingsData["AnsiColorToggle"]}){BRED}{WHITE}[N]{RESET}\n'
+                                            
+                                            f'\n{BGREEN}{WHITE}Customization Settings:{RESET}\n'
+                                            f'{BWHITE}{BLACK}Saved Default Version > ver (currently: {SettingsData["DefaultVersion"]}){BRED}{WHITE}[N]{RESET}\n'
+                                            f'{BWHITE}{BLACK}Saved Default Edition > edi (currently: {SettingsData["DefaultEdition"]}){BRED}{WHITE}[N]{RESET}\n'
+                                            f'{BWHITE}{BLACK}Text Editor > text (currently: {SettingsData["TextEditor"]}){RESET}\n'
+                                            f'{BWHITE}{BLACK}Texture Editor > img (currently: {SettingsData["ImageEditor"]}){RESET}\n'
+                                            f'{BWHITE}{BLACK}Audio Editor> audio (currently: {SettingsData["AudioEditor"]}){RESET}\n'
+                                            
+                                            f'\n{BGREEN}{WHITE}Miscellaneous:{RESET}\n'
+                                            f'{BWHITE}{BLACK}Open settings.json > open (Useful for manual tinkering){RESET}\n'
+                                            f'{BWHITE}{BLACK}Reset Everything > reset (Use when the program is having issues or you\'re planning to update, reset options inside){RESET}\n\n'
+                                            
+                                            f'{BWHITE}{BLACK}{RestartNess2} > quit {RESET}\n'
+                                            f'{BWHITE}{BLACK}Restart PyPacker > restart {RESET}\n'
+                                            f'{CYAN}\n')
+                        else:
+                            MenuingInput = MenuingTemp
+                            MenuingTemp = ""
                         
                         #File
                         if MenuingInput == "out":
@@ -287,7 +297,6 @@ try:
                                     
                                     if SettingsTemp == "local":
                                             print(f'{BYELLOW}{WHITE}Your chosen filepath exists and has been added to the settings file{RESET}\n\n')
-                                            SettingsTemp = utils.LocalFiles("") + r"\output"
                                             FilePathSettings = 1
                                     
                                     elif bool(os.path.exists(SettingsTemp)) == True:  
@@ -297,13 +306,15 @@ try:
                                     else:
                                         pass
                                     
-                                print(SettingsData)
-                                    
-                                if FilePathSettings == 1:            
+                                if FilePathSettings == 1:
+                                    print(SettingsTemp)
+                                    print(SettingsData)
+                                    SettingsData["DefaultFilepath"] = SettingsTemp
+                                    print(SettingsData)         
                                     utils.EditSettings("DefaultFilepath", SettingsTemp)
-                                    
-                                RestartNess1 = '(A restart is nessasary for these changes to take place. Enter "quit" to continue)'
-                                RestartNess2 = 'Restart PyPacker'        
+                                    RestartNess1 = '(A restart is nessasary for these changes to take place. Enter "quit" to continue)'
+                                    RestartNess2 = 'Restart PyPacker'
+                                            
                                 validMain = "settings"
                                 utils.ClearConsole()
                             
@@ -428,11 +439,61 @@ try:
                             
                         elif MenuingInput == "reset":
                             
-                        
-                            FinalResetCheck = input(f'{BYELLOW}{WHITE}Are you sure you want to reset? y/n{RESET}\n\n')
-                            if FinalResetCheck == "y":
-                                utils.DeleteStuff() 
-                        
+                            ReallyList = [" sure ", " really sure ", " REALLY sure ", " REALLY REALLY SURE ", " REAL FUCKIN SURE "] #space are there for a reason, dont remove them
+                            ReallyCounter = 0
+                            #i spent 15 minutes on this funni dont ruin it please
+                            
+                            GitIsInstalled = subprocess.getoutput("git --version")
+                            if "version" not in GitIsInstalled:
+                                CanRunReset = "can not safely reset.\n\nYou have two options:\nVisit the PyPacker Github page and grab the lastest release manually > Py\nDownload Git > Git"
+                                GitIsInstalled = "Not Installed!"
+                            else:
+                                CanRunReset = "can safely reset."
+                            
+                            utils.ClearConsole()
+                            validMain = "reset"
+                            while validMain == "reset":
+                                SettingsTemp = input(f'{BGREEN}{WHITE}Reset All Files?{RESET}\n'
+                                                    f'{BWHITE}{BLACK}Delete Settings, and \\assets files, then regenerates. Simple refresh, can be done without Git installed. > upd{RESET}\n'
+                                                    f'{BWHITE}{BLACK}The "Update" option, but adds the main script file. Soft Reset > most{RESET}\n'
+                                                    f'{BWHITE}{BLACK}Wipe everything in this directory except for a update script, then clones this project from Github. Hard reset. > everything{RESET}\n'
+                                                    f'{BWHITE}{BLACK}Go back to settings menu > quit{RESET}\n\n'
+                                                    f'{BRED}{WHITE}Warning:{BWHITE}{BLACK} the program \"Git\" is required to be installed to use its commands to clone to repository to this folder.{RESET}\n'
+                                                    f'{BWHITE}{BLACK}If you have no idea what that means, thats ok, we\'ll handle it from here.{RESET}\n'
+                                                    f'{BWHITE}{BLACK}Your version of Git is: "{GitIsInstalled}" and {CanRunReset}{RESET}\n'
+                                                    f'{CYAN}\n')
+
+                                if SettingsTemp != "quit":
+                                    if SettingsTemp == "upd":
+                                        SettingsTemp = [utils.LocalFiles("") + r"\settings.json", utils.LocalFiles("") + r"\assets"]
+                                        
+                                    if CanRunReset == "can safely reset.":
+                                              
+                                        if SettingsTemp == "most":
+                                            SettingsTemp = [utils.LocalFiles("") + r"\settings.json", utils.LocalFiles("") + r"\localization", utils.LocalFiles("") + r"\assets", ]
+                                            GrabWithGit = [utils.LocalFiles("") + r"\localization", ]
+                                            
+                                        elif SettingsTemp == "everything":
+                                            SettingsTemp = [utils.LocalFiles("") + r"\settings.json", utils.LocalFiles("") + r"\localization", utils.LocalFiles("") + r"\assets",]
+                                            
+                                        while ReallyCounter < len(ReallyList):
+                                            FinalResetCheck = input(f'{BYELLOW}{WHITE}Are you{ReallyList[ReallyCounter]}you want to reset? y/n{RESET}\n\n')
+                                            if FinalResetCheck != "y":
+                                                break
+                                            else:
+                                                ReallyCounter+=1
+                                    else:
+                                        utils.ClearConsole("")
+                                        print(f'{RESET}{RED}Git is not installed, you can\'t use that comamnd{RESET}\n')
+                                        
+                                    if ReallyCounter == len(ReallyList):
+                                        input(f"{BRED}{WHITE}Press enter to delete, alt+f4 to abort.{RESET}\n")
+                                        utils.DeleteStuff(SettingsTemp)
+
+                                input(f"{BWHITE}{BLACK}Reset Aborted. Press enter to continue.{RESET}")        
+                                validMain = "settings"
+                                utils.ClearConsole()
+                                
                         #Standard    
                         elif MenuingInput == "quit":
                             if RestartNess2 != "Back to Main Menu":
@@ -454,13 +515,11 @@ try:
                         elif MenuingInput == "crash": #only for debug, hiden from print statement
                             raise Exception("Intentional Crash")
                         
-                        elif "Debug_py" in MenuingInput: #only for debug, hiden from print statement
-                            print(f"{MenuingInput.replace('Debug_py ', '')}")
-                        
                         elif MenuingInput == "":
                             utils.ClearConsole()
                                         
                         else:
+                            utils.ClearConsole()
                             print(f"{BWHITE}{BLACK}PyPacker Intergrated Terminal:{RESET}\n\n")
                             print(f"{subprocess.getoutput(MenuingInput)}\n\n")
                             input(f"{BWHITE}{BLACK}Press Enter to continue.{RESET}{CYAN}\n\n")
@@ -470,24 +529,29 @@ try:
                     utils.ClearConsole()
                     validMain = "links"
                     while validMain == "links":
-                        MenuingInput = input(f"{BGREEN}{WHITE}External Links:{RESET}\n"
-                                        f'{BGREEN}{WHITE}Project Links:{RESET}\n'
-                                        f'{BWHITE}{BLACK}PyPacker Github > git {RESET}\n'
-                                        
-                                        f'\n{BGREEN}{WHITE}Other Links:{RESET}\n'
-                                        f'{BWHITE}{BLACK}Carpet Mod Github > car {RESET}\n'
-                                        f'{BWHITE}{BLACK}Scarpet Docs > scar {RESET}\n'
-                                        
-                                        f'\n{BGREEN}{WHITE}Inspiration:{RESET}\n'
-                                        f'{BWHITE}{BLACK}DataPackGen > dpg {RESET}\n'
-                                        f'{BWHITE}{BLACK}DataCreate.py > dcp {RESET}\n'
-                                        
-                                        f'\n{BGREEN}{WHITE}Contributer links: (to contributers: only add if you plan to help out with docs/support or contribute more than just code){RESET}\n'
-                                        f'{BWHITE}{BLACK}Blurple\'s Twitter > twit_1 (May post updates here){RESET}\n'
-                                        f'{BWHITE}{BLACK}Blurple\'s Discord Server > disc_1 (If you have any specific questions, join this and i\'ll help you out){RESET}\n'
-                                        
-                                        f'\n{BWHITE}{BLACK}Main Menu > quit {RESET}\n'
-                                        f'{CYAN}\n\n')
+                        if MenuingTemp == "":
+                            MenuingInput = input(f"{BGREEN}{WHITE}External Links:{RESET}\n"
+                                            f'{BGREEN}{WHITE}Project Links:{RESET}\n'
+                                            f'{BWHITE}{BLACK}PyPacker Github > git {RESET}\n'
+                                            
+                                            f'\n{BGREEN}{WHITE}Other Links:{RESET}\n'
+                                            f'{BWHITE}{BLACK}Carpet Mod Github > car {RESET}\n'
+                                            f'{BWHITE}{BLACK}Scarpet Docs > scar {RESET}\n'
+                                            
+                                            f'\n{BGREEN}{WHITE}Inspiration:{RESET}\n'
+                                            f'{BWHITE}{BLACK}DataPackGen > dpg {RESET}\n'
+                                            f'{BWHITE}{BLACK}DataCreate.py > dcp {RESET}\n'
+                                            
+                                            f'\n{BGREEN}{WHITE}Contributer links: (to contributers: only add if you plan to help out with docs/support or contribute more than just code){RESET}\n'
+                                            f'{BWHITE}{BLACK}Blurple\'s Twitter > twit_1 (May post updates here){RESET}\n'
+                                            f'{BWHITE}{BLACK}Blurple\'s Discord Server > disc_1 (If you have any specific questions, join this and i\'ll help you out){RESET}\n'
+                                            
+                                            f'\n{BWHITE}{BLACK}Main Menu > quit {RESET}\n'
+                                            f'{CYAN}\n\n')
+                        else:
+                            MenuingInput = MenuingTemp
+                            MenuingTemp = ""
+                        
                         if MenuingInput == "git":
                             webbrowser.open("https://github.com/GirlInPurple/Py-Packer")
                             utils.ClearConsole()
@@ -540,7 +604,7 @@ try:
     if __name__ == "__main__":
         
         global MineVersions 
-        MineVersions = { #Every MC version this is compatable with
+        MineVersionsDatapack = { #Every MC version datapack id
             "1.13":"4",
             "1.13.1":"4",
             "1.13.2":"4",
@@ -565,11 +629,40 @@ try:
             "1.18.2":"9",
             "1.19":"10",
             "1.19.1":"10",
-            "1.19.2":"10"
+            "1.19.2":"10",
+            "1.19.3":"10"
+        }
+        MineVersionsResourcepack = { #Every MC version resourcepack id (THIS IS OUTDATED AND MOST LIKELY WRONG)
+            "1.13":"4",
+            "1.13.1":"4",
+            "1.13.2":"4",
+            "1.14":"4",
+            "1.14.1":"4",
+            "1.14.2":"4",
+            "1.14.3":"4",
+            "1.14.4":"4",
+            "1.15":"5",
+            "1.15.1":"5",
+            "1.15.2":"5",
+            "1.16":"5",
+            "1.16.1":"5",
+            "1.16.2":"6",
+            "1.16.3":"6",
+            "1.16.4":"6",
+            "1.16.5":"6",
+            "1.17":"7",
+            "1.17.1":"7",
+            "1.18":"8",
+            "1.18.1":"8",
+            "1.18.2":"9",
+            "1.19":"10",
+            "1.19.1":"10",
+            "1.19.2":"10",
+            "1.19.3":"12"
         }
         
-        os.system('mode con: cols=135 lines=50')
         if sys.platform == "win32":
+            os.system('mode con: cols=135 lines=50')
             ctypes.windll.kernel32.SetConsoleTitleW("PyPacker")
             
         os.system("") #activate ANSI coloring
@@ -584,7 +677,7 @@ except Exception as ex: #"better" error handling
                    f"{RESET}{BWHITE}{BLACK}Here is a little more Info:{RESET}\n"
                    f"{BYELLOW}{WHITE}Type: {exc_type}{RESET}\n" 
                    f"{BYELLOW}{WHITE}File: {fname}{RESET}\n" 
-                   f"{BYELLOW}{WHITE}Line: {exc_tb.tb_lineno} (usually useless unfortuniatly){RESET}\n"
+                   f"{BYELLOW}{WHITE}Line: {exc_tb.tb_lineno}{RESET}\n"
                    f"{BWHITE}{BLACK}Press enter to restart PyPacker, or type \"Exit\" to exit.{RESET}\n\n")
     if ExTemp != "exit":
         os.startfile(sys.argv[0])

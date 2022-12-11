@@ -1,4 +1,13 @@
+#disallow
 /__pycache__
 /assets
 /output
 /settings.json
+
+#allow
+!/docs/
+!/localization/
+!PyPacker.py
+!PyPackerRewrite.py
+!README.md
+!LICENSE

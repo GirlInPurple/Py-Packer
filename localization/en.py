@@ -12,6 +12,8 @@
 #all debug output will stay in english, as python is writen in english and would be difficult to implement
 #if someone figures out how to change all debug logs to other languages, feel free to add it
 
+#this file has variables filled for development purposes and localization is far off, feel free to start translations now so they're ready for when localization is finished
+
 mainmenu = """
 f'{BGREEN}{WHITE}Welcome to PyPacker! Where would you like to start?{RESET}\n'
 f'{BGREEN}{WHITE}PyPacker Main Menu:{RESET}\n'
@@ -35,5 +37,5 @@ f'{BWHITE}{BLACK}Restart PyPacker > restart {RESET}\n'
 f'{CYAN}\n'
 """
 settings = """
-
+TODO
 """
