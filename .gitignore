@@ -3,10 +3,11 @@
 /assets
 /output
 /settings.json
+/localization/__pycache__
 
 #allow
-!/docs/
-!/localization/
+!/docs
+!/localization
 !PyPacker.py
 !PyPackerRewrite.py
 !README.md

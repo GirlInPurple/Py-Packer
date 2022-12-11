@@ -1,9 +1,16 @@
-import os, json, sys, ctypes, webbrowser, subprocess, urllib.request, update #built in imports
-#import pygame #non built in imports (pygame is a temporary example until one exists, then uncomment this line)
-from localization import * #localization
-#from PyPacker import utils, files #depricated as there is an overlap, but keeping for the future for legacy code/debug reasons
+import os, json, sys, ctypes, webbrowser, subprocess, urllib.request, random, update #built in imports
+import numpy #non built in imports, most people have numpy installed so this isnt a problem to use here
+from PyPacker import editors #depricated as there is an overlap, but keeping for the future for legacy code/debug reasons
+from localization.funni import * #Splash Text
+from localization.en import * #English Localization
+from localization.du import * #German/Dutch Localization
+from localization.es_mx import * #Spanish Localization
+from localization.fr_ca import * #French Localization
 
-DefaultSettingsFormat = '{"DefaultVersion": "1.19.2", "DefaultEdition": "Java","DefaultFilepath": "local", "FileMovement": "Move", "AnsiColorToggle": true, "TextEditor": "notepad /a", "ImageEditor": "mspaint", "AudioEditor": "start Audacity", "Debug": false, "MinecraftDir":""}\n'
+#constants
+DefaultSettingsFormat = '{"SettingsVersion":"0", "DefaultVersion": "1.19.2", "DefaultEdition": "Java","DefaultFilepath": "local", "FileMovement": "Move", "AnsiColorToggle": true, "TextEditor": "notepad /a", "ImageEditor": "mspaint", "AudioEditor": "start Audacity", "Debug": false, "MinecraftDir":""}\n'
+__version__ = "0.0.1 PyPacker Unstable Dev Build"
+SplashText = AListOfFunni[random.randrange(len(AListOfFunni))]
 
 try:
     class utils:
@@ -27,8 +34,9 @@ try:
             for Dele in len(List):
                 if sys.platform=='win32':
                     os.system(f"del /f {List[Dele]}")
-                #if sys.platform=='darwin':
-                    #os.system(f"")
+                if sys.platform=='darwin':
+                    os.system(f"")
+                    
     class main:
         def __init__(self):
             
@@ -167,7 +175,7 @@ try:
                     
                 #Main Menu
                 if MissingFiles == []:
-                    MenuingInput = input(f'{BGREEN}{WHITE}Welcome to PyPacker! Where would you like to start?{RESET}\n'
+                    MenuingInput = input(f'{BGREEN}{WHITE}Version: "{__version__}"{RESET}\n\n'
                                         f"{BGREEN}{WHITE}PyPacker Main Menu:{RESET}\n"
                                         f'{BGREEN}{WHITE}All commands in PyPacker are case sensitve, "open" and "out" not guaranteed to work on all Lunix distros{RESET}\n'
                                         f'{BGREEN}{WHITE}You can format "set" and "link" commands like "Command Here":"Command On Next Screen" to skip navigation{RESET}\n'
@@ -663,7 +671,7 @@ try:
         
         if sys.platform == "win32":
             os.system('mode con: cols=135 lines=50')
-            ctypes.windll.kernel32.SetConsoleTitleW("PyPacker")
+            ctypes.windll.kernel32.SetConsoleTitleW(f'PyPacker: "{SplashText}"')
             
         os.system("") #activate ANSI coloring
         main = main() #for __init__()
