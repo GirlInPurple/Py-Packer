@@ -1,10 +1,4 @@
 import sys, os, re, time, ctypes, webbrowser, urllib.request #all built in, convenient
-os.system("") #why does this fix ANSI color coding? god only knows, i have no clue
-
-#window customisation, breaks VScode
-os.system('mode con: cols=130 lines=50')
-if sys.platform == "win32":
-    ctypes.windll.kernel32.SetConsoleTitleW("PyPacker") #rename console window, thx stackoverflow
 
 class utils: #startup and other universal utils
     def __init__(self):
@@ -652,53 +646,70 @@ class editors: #file editors, notes here going forward
 
 if __name__ == "__main__":
 
-    #ansi color coding for terminals
-    BLACK = '\u001b[30m'
-    RED = '\u001b[31m'
-    BRED = '\u001b[41;1m'
-    GREEN = '\u001b[32m'
-    BGREEN = '\u001b[42;1m'
-    YELLOW = '\033[92m'
-    BYELLOW = '\u001b[43;1m'
-    BLUE = '\u001b[34m'
-    MAGENTA = '\u001b[35m'
-    BMAGENTA = '\u001b[45;1m'
-    CYAN = '\u001b[36;1m'
-    WHITE = '\u001b[37m'
-    BWHITE = '\u001b[47;1m'
-    RESET = "\u001b[0m"
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    
-    #check if settigns file exists, if not make it
-    if bool(os.path.exists(utils.LocalFiles("") + "\settings.txt")) != True:       
-        #print(f'{BYELLOW}{WHITE}No "settings.txt" file exists in this programs directory, one will automatically be created, but it will be set to built in defaults.{RESET}')
-        os.chdir(utils.LocalFiles(""))
-        with open("settings.txt", "x") as NewSettings:
-            NewSettings.write("1.19.2\nlocal\nMove\nFalse\nFalse\nnotepad /a\nmspaint\nstart Audacity\n0")
-            NewSettings.close()
-
-    #check if standard output file exists, if not make it
-    if bool(os.path.exists(utils.LocalFiles("") + "\output")) != True:
-        #print(f'{BYELLOW}{WHITE}No "output" folder exists in this programs directory, one will automatically be created.{RESET}')
-        os.chdir(utils.LocalFiles(""))
-        os.mkdir('output')
+    temp = input("This version of pypacker is depricated and only used as legacy code.\n" 
+                 "Press enter to exit, type \"dep\" to enter PyPacker Legacy,\n" 
+                 "or type \"new\" to atempt to launch PyPackerRewrite (not guarenteed to work).\n\n")
+    if temp != "dep":
+        if temp == "":
+            sys.exit()
+        elif temp == "new":
+            os.system(f"python {utils.LocalFiles('')}\PyPackerRewrite.py")
+    else:
         
-    #check if example photo exists, if not grab it from Wikipedia
-    #yes, i hit randomize a few times and found this page, a harmless building in England, perfect for this
-    #full rights to the copyright holder of this photo, if it needs to be removed i will gladly do so.
-    if bool(os.path.exists(utils.LocalFiles("") + "\Aberdeen_Tolbooth.jpg")) != True:
-        #print(f'{BYELLOW}{WHITE}No "output" folder exists in this programs directory, one will automatically be created.{RESET}')
-        imgURL = "https://upload.wikimedia.org/wikipedia/commons/6/62/Aberdeen_Tolbooth.jpg"
-        imgLOCAL = utils.LocalFiles("") + "\Aberdeen_Tolbooth.jpg"
-        urllib.request.urlretrieve(imgURL, imgLOCAL)
-    
-    #check if example audio tracks exist, if not, do nothing
-    if bool(os.path.exists("C:\Windows\Media\Alarm01")) == True:
-        print(f'')
-    
-    utils.ClearConsole() #just in case some graphichal bugs happen when starting up
-    
-    PPutils = utils() #general utils, needs to be loaded first or everything breaks
-    PPmain = main() #for settings handling and create main menu
-    main.main() #launches the UI, branches from there
+        os.system("") #why does this fix ANSI color coding? god only knows, i have no clue
+
+        #window customisation, breaks VScode
+        os.system('mode con: cols=130 lines=50')
+        if sys.platform == "win32":
+            ctypes.windll.kernel32.SetConsoleTitleW("PyPacker") #rename console window, thx stackoverflow
+        
+        #ansi color coding for terminals
+        BLACK = '\u001b[30m'
+        RED = '\u001b[31m'
+        BRED = '\u001b[41;1m'
+        GREEN = '\u001b[32m'
+        BGREEN = '\u001b[42;1m'
+        YELLOW = '\033[92m'
+        BYELLOW = '\u001b[43;1m'
+        BLUE = '\u001b[34m'
+        MAGENTA = '\u001b[35m'
+        BMAGENTA = '\u001b[45;1m'
+        CYAN = '\u001b[36;1m'
+        WHITE = '\u001b[37m'
+        BWHITE = '\u001b[47;1m'
+        RESET = "\u001b[0m"
+        BOLD = '\033[1m'
+        UNDERLINE = '\033[4m'
+        
+        #check if settigns file exists, if not make it
+        if bool(os.path.exists(utils.LocalFiles("") + "\settings.txt")) != True:       
+            #print(f'{BYELLOW}{WHITE}No "settings.txt" file exists in this programs directory, one will automatically be created, but it will be set to built in defaults.{RESET}')
+            os.chdir(utils.LocalFiles(""))
+            with open("settings.txt", "x") as NewSettings:
+                NewSettings.write("1.19.2\nlocal\nMove\nFalse\nFalse\nnotepad /a\nmspaint\nstart Audacity\n0")
+                NewSettings.close()
+
+        #check if standard output file exists, if not make it
+        if bool(os.path.exists(utils.LocalFiles("") + "\output")) != True:
+            #print(f'{BYELLOW}{WHITE}No "output" folder exists in this programs directory, one will automatically be created.{RESET}')
+            os.chdir(utils.LocalFiles(""))
+            os.mkdir('output')
+            
+        #check if example photo exists, if not grab it from Wikipedia
+        #yes, i hit randomize a few times and found this page, a harmless building in England, perfect for this
+        #full rights to the copyright holder of this photo, if it needs to be removed i will gladly do so.
+        if bool(os.path.exists(utils.LocalFiles("") + "\Aberdeen_Tolbooth.jpg")) != True:
+            #print(f'{BYELLOW}{WHITE}No "output" folder exists in this programs directory, one will automatically be created.{RESET}')
+            imgURL = "https://upload.wikimedia.org/wikipedia/commons/6/62/Aberdeen_Tolbooth.jpg"
+            imgLOCAL = utils.LocalFiles("") + "\Aberdeen_Tolbooth.jpg"
+            urllib.request.urlretrieve(imgURL, imgLOCAL)
+        
+        #check if example audio tracks exist, if not, do nothing
+        if bool(os.path.exists("C:\Windows\Media\Alarm01")) == True:
+            print(f'')
+        
+        utils.ClearConsole() #just in case some graphichal bugs happen when starting up
+        
+        PPutils = utils() #general utils, needs to be loaded first or everything breaks
+        PPmain = main() #for settings handling and create main menu
+        main.main() #launches the UI, branches from there
