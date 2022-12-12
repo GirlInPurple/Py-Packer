@@ -2,8 +2,9 @@
 /__pycache__
 /assets
 /output
-/settings.json
+settings.json
 /localization/__pycache__
+testing.py
 
 #allow
 !/docs

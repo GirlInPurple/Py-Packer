@@ -20,8 +20,8 @@ A work in progress CUI (Console User Interface) based creation tool for 1.13.0 t
 
 ## Main Contributors
 
-- <b> @OrigamingWasTaken </b> (Original creator of [DataCreate.py](https://github.com/OrigamingWasTaken/DataCreate), a part of this projects foundation)
-- <b> @AnhNguyenlost13 </b> (Helping with testing)
+- <b> @OrigamingWasTaken </b>: Original creator of [DataCreate.py](https://github.com/OrigamingWasTaken/DataCreate), a part of this projects foundation
+- <b> @AnhNguyenlost13 </b>: Helping with testing
 
 ## Known Issues
 
@@ -41,7 +41,7 @@ While launching PyPacker, 5 files will be created:
 - A random photo grabbed off Wikipedia as a [test image](https://en.wikipedia.org/wiki/The_Tolbooth,_Aberdeen) later
 - ["God Save The King"](https://en.wikipedia.org/wiki/God_Save_the_King), the United Kingdom's nation anthem
 
-The 2 example files will be saved to the "assets" folder and are used to test your chosen editors for files the 3 kinds of files this program can handle; text/json, image, and audio. The `settings.json` is not saved to the assets folder as to save on having to move it around later for Python to access it. 
+The 2 example files will be saved to the "assets" folder and are used to test your chosen editors for files the 3 kinds of files this program can handle; text/json, image, and audio. The `settings.json` is not saved to the assets folder as to save on having to move it around later for Python to access it.
 
 PyPacker has been tested on Python versions `3.10.8`, `3.10.9`, and `3.11.1`. It may work on other versions up to `3.0`, but no gaurentees.
 
@@ -147,9 +147,15 @@ UNDERLINE = '\033[4m'
 - Filepaths (utils.LocalFiles("") is just shorthand for the filepath from system root to the programs location.)
 
 ```python
+#Path to Program Folder:
+
 fr'{utils.LocalFiles("")}\file_name.extention'
-
-#or
-
+#or,
 utils.LocalFiles("") + r'\file_name.extention'
+#or,
+os.path.join(utils.LocalFiles(""), "file_name.extention")
+
+#Path to %APPDATA%
+
+os.path.join(os.environ["APPDATA"], "file_name.extention")
 ```

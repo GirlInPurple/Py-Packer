@@ -1,15 +1,20 @@
-import os, json, sys, ctypes, webbrowser, subprocess, urllib.request, random, update #built in imports
-import numpy #non built in imports, most people have numpy installed so this isnt a problem to use here
-from PyPacker import editors #depricated as there is an overlap, but keeping for the future for legacy code/debug reasons
-from localization.funni import * #Splash Text
-from localization.en import * #English Localization
-from localization.du import * #German/Dutch Localization
-from localization.es_mx import * #Spanish Localization
-from localization.fr_ca import * #French Localization
+import os, json, sys, ctypes, webbrowser, subprocess, urllib.request, random, time #built in imports
+try:
+    import numpy, pygame #non built in imports, most people have these installed so not a problem
+    from PyPacker import editors #depricated, but keeping for the future for legacy code/debug reasons
+    from localization.funni import * #Splash Text
+    from localization.en import * #English Localization
+    from localization.du import * #German/Dutch Localization
+    from localization.es_mx import * #Spanish Localization
+    from localization.fr_ca import * #French Localization
+    from update import *
+except Exception:
+    os.system("pip3 install requirements.txt")
 
 #constants
-DefaultSettingsFormat = '{"SettingsVersion":"0", "DefaultVersion": "1.19.2", "DefaultEdition": "Java","DefaultFilepath": "local", "FileMovement": "Move", "AnsiColorToggle": true, "TextEditor": "notepad /a", "ImageEditor": "mspaint", "AudioEditor": "start Audacity", "Debug": false, "MinecraftDir":""}\n'
-__version__ = "0.0.1 PyPacker Unstable Dev Build"
+DefaultSettingsFormat = '{"SettingsVersion":"0", "DefaultVersion": "1.19.2", "DefaultEdition": "java","DefaultFilepath": "local", "FileMovement": "move", "AnsiColorToggle": true, "TextEditor": "notepad /a", "ImageEditor": "mspaint", "AudioEditor": "start Audacity", "Debug": false, "MinecraftDir":""}'
+__version__ = "0.0.2+1.19.2_PyPacker_Unstable_Dev" #Version Number; Newest compatable (Java only) MC Version; Stable/Unstable; Dev, Beta, Release
+random.seed(time.time())
 SplashText = AListOfFunni[random.randrange(len(AListOfFunni))]
 
 try:
@@ -21,14 +26,27 @@ try:
         def ClearConsole():
             if sys.platform=='win32':
                 os.system('cls')
-
             if sys.platform=='darwin':
                 os.system('clear')
+            print(f'{BGREEN}{WHITE}Version: "{__version__}"{RESET}\n\n')
                 
         def EditSettings(JsonKey, Value):
-            SettingsData[JsonKey] = Value
-            with open('json_data.json', 'w') as f:
-                f.write(SettingsData)
+            
+            #set new value
+            if r"\" or r"/"" in Value:
+                SettingsData[JsonKey] = Value
+            else:
+                SettingsData[JsonKey] = Value.lower()
+            
+            #delete
+            if sys.platform=='win32':
+                os.system(f"del /f {utils.LocalFiles('')}\settings.json")
+            if sys.platform=='darwin':
+                os.system(f"")
+            
+            #write new file
+            with open('settings.json', 'x') as f:
+                f.write(json.dumps(SettingsData))
         
         def DeleteStuff(List):
             for Dele in len(List):
@@ -175,8 +193,7 @@ try:
                     
                 #Main Menu
                 if MissingFiles == []:
-                    MenuingInput = input(f'{BGREEN}{WHITE}Version: "{__version__}"{RESET}\n\n'
-                                        f"{BGREEN}{WHITE}PyPacker Main Menu:{RESET}\n"
+                    MenuingInput = input(f"{BGREEN}{WHITE}PyPacker Main Menu:{RESET}\n"
                                         f'{BGREEN}{WHITE}All commands in PyPacker are case sensitve, "open" and "out" not guaranteed to work on all Lunix distros{RESET}\n'
                                         f'{BGREEN}{WHITE}You can format "set" and "link" commands like "Command Here":"Command On Next Screen" to skip navigation{RESET}\n'
                                         
@@ -185,16 +202,16 @@ try:
                                         f"{BWHITE}{BLACK}Open Output Folder > out {RESET}\n"
                                         
                                         f'\n{BGREEN}{WHITE}PyPacker:{RESET}\n'
-                                        f"{BWHITE}{BLACK}Pack File Generators > files (Datapack, Behavior, Resource){RESET}\n"
-                                        f"{BWHITE}{BLACK}Pack File Editors > edit (Datapack, Behavior, Resource){RESET}\n"
-                                        f"{BWHITE}{BLACK}Other File Editors > edit (Scarpet, PLCCjson, Mlog){RESET}\n"
+                                        f"{BWHITE}{BLACK}Pack File Generators > pfiles (Datapack, Behavior, Resource){RESET}\n"
+                                        f"{BWHITE}{BLACK}Pack File Editors > pedit (Datapack, Behavior, Resource){RESET}\n"
+                                        f"{BWHITE}{BLACK}Other File Editors > oedit (Scarpet, PLCCjson, Mlog){RESET}\n"
                                         
                                         f'\n{BGREEN}{WHITE}Miscellaneous:{RESET}\n'
                                         f"{BWHITE}{BLACK}Settings Menu > set {RESET}\n"
                                         f"{BWHITE}{BLACK}External Links > link {RESET}\n\n"
                                         
                                         f"{BWHITE}{BLACK}Quit PyPacker > quit {RESET}\n"
-                                        f"{BWHITE}{BLACK}Restart PyPacker > restart {RESET}\n"
+                                        f"{BWHITE}{BLACK}Restart PyPacker > res {RESET}\n"
                                         f"{CYAN}\n")
                     
                 else:
@@ -227,12 +244,12 @@ try:
                     print(RESET + BYELLOW + "Output File has been opened, choose another option." + RESET + CYAN + "\n")
                 
                 #PyPacker
-                elif MenuingInput == "files": #datapack file creator
+                elif MenuingInput == "pfiles": #datapack file creator
                     MenuingInput = "filecreate"
                     while validMain == "filecreate":
                         pass
                     
-                elif MenuingInput == "edit": #resourcepack file creator
+                elif MenuingInput == "pedit": #resourcepack file creator
                     print(RESET + BYELLOW + "launching RP file generator" + RESET + CYAN)
                     MenuingInput = "editors"
                     while validMain == "editors":
@@ -273,7 +290,7 @@ try:
                                             
                                             f'\n{BGREEN}{WHITE}Text Settings:{RESET}\n'
                                             f'{BWHITE}{BLACK}Show Debug Messages > debug (currently: {SettingsData["Debug"]}){BRED}{WHITE}[N]{RESET}\n'
-                                            f'{BWHITE}{BLACK}Disable ANSI+Unicode text > color (currently: {SettingsData["AnsiColorToggle"]}){BRED}{WHITE}[N]{RESET}\n'
+                                            f'{BWHITE}{BLACK}Use ANSI+Unicode text > color (currently: {SettingsData["AnsiColorToggle"]}){BRED}{WHITE}[N]{RESET}\n'
                                             
                                             f'\n{BGREEN}{WHITE}Customization Settings:{RESET}\n'
                                             f'{BWHITE}{BLACK}Saved Default Version > ver (currently: {SettingsData["DefaultVersion"]}){BRED}{WHITE}[N]{RESET}\n'
@@ -287,7 +304,7 @@ try:
                                             f'{BWHITE}{BLACK}Reset Everything > reset (Use when the program is having issues or you\'re planning to update, reset options inside){RESET}\n\n'
                                             
                                             f'{BWHITE}{BLACK}{RestartNess2} > quit {RESET}\n'
-                                            f'{BWHITE}{BLACK}Restart PyPacker > restart {RESET}\n'
+                                            f'{BWHITE}{BLACK}Restart PyPacker > res {RESET}\n'
                                             f'{CYAN}\n')
                         else:
                             MenuingInput = MenuingTemp
@@ -315,10 +332,7 @@ try:
                                         pass
                                     
                                 if FilePathSettings == 1:
-                                    print(SettingsTemp)
-                                    print(SettingsData)
-                                    SettingsData["DefaultFilepath"] = SettingsTemp
-                                    print(SettingsData)         
+                                    SettingsData["DefaultFilepath"] = SettingsTemp         
                                     utils.EditSettings("DefaultFilepath", SettingsTemp)
                                     RestartNess1 = '(A restart is nessasary for these changes to take place. Enter "quit" to continue)'
                                     RestartNess2 = 'Restart PyPacker'
@@ -339,7 +353,7 @@ try:
 
                                 if SettingsTemp != "quit":
                                     if SettingsTemp == "Move" or "Copy" or "Choose":
-                                        utils.EditSettings("", 2, SettingsTemp)
+                                        utils.EditSettings("FileMovement", SettingsTemp)
                                         print(f'{BYELLOW}{WHITE}Your choice has been added to the settings file{RESET}\n\n')
                                     else:
                                         print(f'{RESET}{RED}Invalid argument. Please send a valid input.\n{RESET}\n')
@@ -347,11 +361,14 @@ try:
                                 RestartNess1 = '(A restart is nessasary for these changes to take place. Enter "quit" to continue)'
                                 RestartNess2 = 'Restart PyPacker'        
                                 validMain = "settings"
+                                utils.ClearConsole()
                                 
                         elif MenuingInput == "dir":
                             utils.ClearConsole()
                             validMain = "MCdir"
+                            SetNewSettings = 0
                             while validMain == "MCdir":
+                                utils.ClearConsole()
                                 SettingsTemp = ""
                                 SettingsTemp = input(f'{BGREEN}{WHITE}Minecraft Assets Directory{RESET}\n'
                                                     f'{BWHITE}{BLACK}Auto Dectect: PyPacker will try and dectect your Java Minecraft instalation.{RESET}\n' 
@@ -362,15 +379,36 @@ try:
                                                     f'{BWHITE}{BLACK}Type "auto" to Detect, "manu" for Manual, or "quit" to abort.{RESET}\n'
                                                     f'{CYAN}\n')
                                 
-                                if SettingsTemp == "quit":
+                                if SettingsTemp != "quit":
+                                    if SettingsTemp == "auto":
+                                        if bool(os.path.exists(MCDir := r"C:%APPDATA%\Roaming\.minecraft")) == True:
+                                            input(f'{BWHITE}{BLACK}That filepath exists and has been set as the output filepath. Press enter to contiue.{RESET}\n\n')
+                                            SetNewSettings = 1
+                                            LeaveScreen = 1
+                                        else:
+                                            input(f'{RESET}{RED}It seems Minecraft Java is not installed. If it is but PyPacker is bugged an can\'t detect it, try setting it manually. Press enter to continue{RESET}\n')
+                                    elif SettingsTemp == "manu":
+                                        SettingsTemp = input(f'{BWHITE}{BLACK}Paste the filepath to your chosen launcher and press enter.{RESET}\n\n')
+                                        if bool(os.path.exists(SettingsTemp)) == True:
+                                            input(f'{BWHITE}{BLACK}That filepath exists and has been set as the output filepath. Press enter to contiue.{RESET}\n\n')
+                                            MCDir = SettingsTemp
+                                            SetNewSettings = 1
+                                            LeaveScreen = 1
+                                        else:
+                                            input(f'{RESET}{RED}That is not a valid filepath Press enter to continue{RESET}\n')
+                                
+                                    if SetNewSettings == 1:
+                                        SettingsData["MinecraftDir"] = MCDir
+                                        utils.EditSettings("MinecraftDir", MCDir)
+                                else:
+                                    LeaveScreen = 1
+                                
+                                if LeaveScreen == 1:
                                     RestartNess1 = '(A restart is nessasary for these changes to take place. Enter "quit" to continue)'
                                     RestartNess2 = 'Restart PyPacker'
                                     validMain = "settings"
-                                elif SettingsTemp == "auto":
-                                    print("a")
-                                elif SettingsTemp == "manu":
-                                    print("a")
-                        
+                                    utils.ClearConsole()
+                                
                         #Text        
                         elif MenuingInput == "debug":
                             utils.ClearConsole()
@@ -379,13 +417,13 @@ try:
                                 SettingsTemp = ""
                                 SettingsTemp = input(f'{BWHITE}{BLACK}Debug mode will cause some minor graphical issues but is overall useful if you plan\non messing with this projects code or the settings file.{RESET}\n' 
                                                     f"{BYELLOW}{WHITE}This is meant for devs, github contributors, and people who know what they're doing only.{RESET}\n"
-                                                    f'{BWHITE}{BLACK}Type "True" to turn it on, "False" to turn it off, "quit" to abort.{RESET}\n'
+                                                    f'{BWHITE}{BLACK}Type "true" to turn it on, "false" to turn it off, "quit" to abort.{RESET}\n'
                                                     f'{CYAN}\n')
                                 
                                 if SettingsTemp == "quit":
                                     pass
-                                elif SettingsTemp == "True" or "False":
-                                    utils.EditSettings("", 3, SettingsTemp)
+                                elif SettingsTemp == "true" or "false":
+                                    utils.EditSettings("Debug", SettingsTemp)
                                     print(f'{BYELLOW}{WHITE}Your choice has been added to the settings file{RESET}\n\n')
                                 else:
                                     print(f'{RESET}{RED}Invalid argument. Please send a valid input.\n{RESET}\n')
@@ -514,7 +552,7 @@ try:
                                 utils.ClearConsole()
                                 validMain = "mainmenu"
                       
-                        elif MenuingInput == "restart":
+                        elif MenuingInput == "res":
                             input(RESET + BYELLOW + "Press enter to restart PyPacker." + RESET + "\n")
                             utils.ClearConsole()
                             os.startfile(sys.argv[0])
@@ -596,7 +634,7 @@ try:
                     utils.ClearConsole()
                     sys.exit()
                 
-                elif MenuingInput == "restart": #closes the program
+                elif MenuingInput == "res": #closes the program
                     input(RESET + BYELLOW + "Press enter to restart PyPacker." + RESET + "\n")
                     utils.ClearConsole()
                     os.startfile(sys.argv[0])
