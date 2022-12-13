@@ -2,21 +2,22 @@
 
 A work in progress CUI (Console User Interface) based creation tool for 1.13.0 through 1.19.2 Java Minecraft.
 
-<b>This project is being completely rewriten and is very unstable, it is recommended to not use it currently. PyPacker Legacy is still here in its incompleted state and still works fine, but is incompatable with PyPackerRewrite and may break a majoity of future releases.</b>
+<b>This project is being completely rewritten and is very unstable, it is recommended to not use it currently. PyPacker Legacy is still here in its uncompleted state and still works fine, but is incompatible with PyPackerRewrite and may break a majoity of future releases.</b>
 
-## Short Term Plans (this project's main plans.)
+## This Projects Plans in order of Development
 
+- [ ] Make a functional settings page <i>(Status: In Progress)</i>
+- [ ] [PojavLaucher](https://github.com/PojavLauncherTeam/PojavLauncher) Custom Controls creator <i>(Status: Planning)</i>
+- [ ] Update to 1.19.3/1.20 ASAP
+- [ ] Localization to French, Spanish, and German, most likely in that order
 - [ ] Resource and Behavior/Datapack Creation simplification
 - [ ] Scarpet code generator
-- [ ] [PojavLaucher](https://github.com/PojavLauncherTeam/PojavLauncher) Custom Controls creator <i>(In Progress!)</i>
-- [ ] Update to 1.19.3/1.20 ASAP <i>(In Progress!)</i>
-- [ ] Make a functional settings page <i>(In Progress!)</i>
-
-## Long Term Plans (up in the air and may not happen at all)
-
-- [ ] Localization to French, Spanish, and German (most likely in that order)
-- [ ] Add a [Mindustry](https://github.com/Anuken/Mindustry) [Logic](https://mindustrygame.github.io/wiki/logic/0-introduction/) <i>(those are two different links)</i> code generator using the codebase of the Scarpet generator as they have some similarities
 - [ ] Linux/OSX Support
+
+Beyond this point is stuff I'll add if i have the time or if gets requested a lot:
+
+- [ ] Add a [Mindustry](https://github.com/Anuken/Mindustry) [Logic](https://mindustrygame.github.io/wiki/logic/0-introduction/) <i>(those are two different links)</i> code generator using the codebase of the Scarpet generator as they have some similarities
+- [ ] [BDFD.go](https://github.com/NilPointer-Software/bdfd-wiki) to [NextCord.py](https://github.com/nextcord/nextcord) Translator
 
 ## Main Contributors
 
@@ -25,7 +26,7 @@ A work in progress CUI (Console User Interface) based creation tool for 1.13.0 t
 
 ## Known Issues
 
-- Due to OS limitations, you cant have 2 of the same "data" folder without manualy creating it. The current fix is adding "_0" to the file name, but it requries you to go into the files and edit the folder names manually.
+- Due to OS limitations, you cant have 2 of the same "data" folder without manually creating it. The current fix is adding "_0" to the file name, but it requires you to go into the files and edit the folder names manually.
 - This project will not work on most - if not all - Linux distros. Porting it over to Linux/OSX is in the plans, but quite far off due to the console based nature of this program.
 
 ## First Startup
@@ -37,17 +38,17 @@ When you first launch PyPacker, you can review the settings or just skip past it
 While launching PyPacker, 5 files will be created:
 
 - Two folder will be created, "output" and "assets"
-- A "settings.json" file will be created then writen in immediately, the settings are msotly self explanatory, feel free to mess around with it
+- A "settings.json" file will be created then written in immediately, the settings are mostly self explanatory, feel free to mess around with it
 - A random photo grabbed off Wikipedia as a [test image](https://en.wikipedia.org/wiki/The_Tolbooth,_Aberdeen) later
 - ["God Save The King"](https://en.wikipedia.org/wiki/God_Save_the_King), the United Kingdom's nation anthem
 
 The 2 example files will be saved to the "assets" folder and are used to test your chosen editors for files the 3 kinds of files this program can handle; text/json, image, and audio. The `settings.json` is not saved to the assets folder as to save on having to move it around later for Python to access it.
 
-PyPacker has been tested on Python versions `3.10.8`, `3.10.9`, and `3.11.1`. It may work on other versions up to `3.0`, but no gaurentees.
+PyPacker has been tested on Python versions `3.10.8`, `3.10.9`, and `3.11.1`. It may work on other versions up to `3.0`, but no guarantees.
 
 ## Contributing
 
-Anyone is free to modify, contribute, or change this program in any way you see fit, it's MIT lisense for a reason. But if you do contribute, please try to keep the code in this format so we can all understand it and edit it cleanly. If you happen to make any of these examples faster, feel free to paste them here so everything can be changed over.
+Anyone is free to modify, contribute, or change this program in any way you see fit, it's MIT license for a reason. But if you do contribute, please try to keep the code in this format so we can all understand it and edit it cleanly. If you happen to make any of these examples faster, feel free to paste them here so everything can be changed over.
 
 - Menus (Large `input()`/`print()` statements):
 
@@ -70,10 +71,10 @@ while validName == "Page Name"
             f'{Background Color}{Text Color}Text{RESET}\n'
 
             f'{Background Color}{Text Color}Back to [whatever last page was] > quit{RESET}\n' #must be on every page
-            f'{Background Color}{Text Color}Restart PyPacker > restart {RESET}\n' #if nessasary on the page
+            f'{Background Color}{Text Color}Restart PyPacker > restart {RESET}\n' #if necessary on the page
             f'{CYAN}\n') #input text is cyan, only add if the print is part of a input()
     else:
-        MenuingInput = "Override Command" #this is used to get sent immediatly to a certain page/command
+        MenuingInput = "Override Command" #this is used to get sent immediately to a certain page/command
 
     if MenuingInput == "Nested Page Command":
         utils.ClearConsole()
@@ -88,7 +89,7 @@ while validName == "Page Name"
                 f'{Background Color}{Text Color}Text{RESET}\n'
 
                 f'{Background Color}{Text Color}Back to [whatever last page was] > quit{RESET}\n' #must be on every page
-                f'{Background Color}{Text Color}Restart PyPacker > restart {RESET}\n' #if nessasary on the page
+                f'{Background Color}{Text Color}Restart PyPacker > restart {RESET}\n' #if necessary on the page
                 f'{CYAN}\n')
 
             if MenuingInput == "choice0":
@@ -121,7 +122,7 @@ while validName == "Page Name"
 #options: BWHITE, BLACK
 #user input: RESET, CYAN
 
-#ANSI Refrence Table (Please, don't use bare ANSI codes in strings, save us our time and sanity.)
+#ANSI Reference Table (Please, don't use bare ANSI codes in strings, save us our time and sanity.)
 
 #Used:
 RESET = "\u001b[0m"

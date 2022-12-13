@@ -5,6 +5,7 @@
 settings.json
 /localization/__pycache__
 testing.py
+/.vscode
 
 #allow
 !/docs

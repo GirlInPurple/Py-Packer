@@ -1,7 +1,6 @@
 import os, json, sys, ctypes, webbrowser, subprocess, urllib.request, random, time #built in imports
 try:
     import numpy, pygame #non built in imports, most people have these installed so not a problem
-    from PyPacker import editors #depricated, but keeping for the future for legacy code/debug reasons
     from localization.funni import * #Splash Text
     from localization.en import * #English Localization
     from localization.du import * #German/Dutch Localization
@@ -9,11 +8,14 @@ try:
     from localization.fr_ca import * #French Localization
     from update import *
 except Exception:
+    print("installing nessasary libraries...")
     os.system("pip3 install requirements.txt")
+    time.sleep(3)
+    os.startfile(sys.argv[0])
 
 #constants
 DefaultSettingsFormat = '{"SettingsVersion":"0", "DefaultVersion": "1.19.2", "DefaultEdition": "java","DefaultFilepath": "local", "FileMovement": "move", "AnsiColorToggle": true, "TextEditor": "notepad /a", "ImageEditor": "mspaint", "AudioEditor": "start Audacity", "Debug": false, "MinecraftDir":""}'
-__version__ = "0.0.2+1.19.2_PyPacker_Unstable_Dev" #Version Number; Newest compatable (Java only) MC Version; Stable/Unstable; Dev, Beta, Release
+__version__ = "0.0.3+1.19.2_PyPacker_Unstable_Dev" #Version Number; Newest compatable (Java only) MC Version; Stable/Unstable; Dev, Beta, Release
 random.seed(time.time())
 SplashText = AListOfFunni[random.randrange(len(AListOfFunni))]
 
@@ -33,20 +35,14 @@ try:
         def EditSettings(JsonKey, Value):
             
             #set new value
-            if r"\" or r"/"" in Value:
+            if "\\" or "/" in Value:
                 SettingsData[JsonKey] = Value
             else:
                 SettingsData[JsonKey] = Value.lower()
             
-            #delete
-            if sys.platform=='win32':
-                os.system(f"del /f {utils.LocalFiles('')}\settings.json")
-            if sys.platform=='darwin':
-                os.system(f"")
-            
             #write new file
-            with open('settings.json', 'x') as f:
-                f.write(json.dumps(SettingsData))
+            with open('settings.json', 'w') as f:
+                json.dump(SettingsData, f)
         
         def DeleteStuff(List):
             for Dele in len(List):
@@ -212,7 +208,7 @@ try:
                                         
                                         f"{BWHITE}{BLACK}Quit PyPacker > quit {RESET}\n"
                                         f"{BWHITE}{BLACK}Restart PyPacker > res {RESET}\n"
-                                        f"{CYAN}\n")
+                                        f"{CYAN}\n").lower()
                     
                 else:
                     MenuingInput = "set"
@@ -301,7 +297,7 @@ try:
                                             
                                             f'\n{BGREEN}{WHITE}Miscellaneous:{RESET}\n'
                                             f'{BWHITE}{BLACK}Open settings.json > open (Useful for manual tinkering){RESET}\n'
-                                            f'{BWHITE}{BLACK}Reset Everything > reset (Use when the program is having issues or you\'re planning to update, reset options inside){RESET}\n\n'
+                                            f'{BWHITE}{BLACK}Reset Everything > reset (NONFUNCTIONAL) (Use when the program is having issues or you\'re planning to update, reset options inside){RESET}\n\n'
                                             
                                             f'{BWHITE}{BLACK}{RestartNess2} > quit {RESET}\n'
                                             f'{BWHITE}{BLACK}Restart PyPacker > res {RESET}\n'
@@ -367,6 +363,7 @@ try:
                             utils.ClearConsole()
                             validMain = "MCdir"
                             SetNewSettings = 0
+                            LeaveScreen = 0
                             while validMain == "MCdir":
                                 utils.ClearConsole()
                                 SettingsTemp = ""
@@ -378,15 +375,15 @@ try:
                                                     f'{BWHITE}{BLACK}(This program will refuse to link to TLauncher, PolyMC, or any other Cracked/questionable launchers){RESET}\n' 
                                                     f'{BWHITE}{BLACK}Type "auto" to Detect, "manu" for Manual, or "quit" to abort.{RESET}\n'
                                                     f'{CYAN}\n')
-                                
+                                LeaveScreen = 0
                                 if SettingsTemp != "quit":
                                     if SettingsTemp == "auto":
-                                        if bool(os.path.exists(MCDir := r"C:%APPDATA%\Roaming\.minecraft")) == True:
+                                        if bool(os.path.exists(MCDir := os.path.join(os.environ["APPDATA"], ".minecraft"))) == True:
                                             input(f'{BWHITE}{BLACK}That filepath exists and has been set as the output filepath. Press enter to contiue.{RESET}\n\n')
                                             SetNewSettings = 1
                                             LeaveScreen = 1
                                         else:
-                                            input(f'{RESET}{RED}It seems Minecraft Java is not installed. If it is but PyPacker is bugged an can\'t detect it, try setting it manually. Press enter to continue{RESET}\n')
+                                            input(f'{RESET}{RED}It seems Minecraft Java is not installed. If it is but PyPacker can\'t detect it, try setting it manually.\nPress enter to continue{RESET}\n')
                                     elif SettingsTemp == "manu":
                                         SettingsTemp = input(f'{BWHITE}{BLACK}Paste the filepath to your chosen launcher and press enter.{RESET}\n\n')
                                         if bool(os.path.exists(SettingsTemp)) == True:
@@ -434,9 +431,27 @@ try:
                                 utils.ClearConsole()
                                 
                         elif MenuingInput == "color":
+                            utils.ClearConsole()
+                            validMain = "color toggle"
+                            while validMain == "color toggle":
+                                SettingsTemp = ""
+                                SettingsTemp = input(f'{BWHITE}{BLACK}Toggle the ANSII/Unicode encoding for ancient terminals{RESET}\n' 
+                                                    f"{BYELLOW}{WHITE}It is not reccomended to toggle this setting.{RESET}\n"
+                                                    f'{BWHITE}{BLACK}Type "true" to turn it on, "false" to turn it off, "quit" to abort.{RESET}\n'
+                                                    f'{CYAN}\n')
+                                
+                                if SettingsTemp == "quit":
+                                    pass
+                                elif SettingsTemp == "true" or "false":
+                                    utils.EditSettings("AnsiColorToggle", SettingsTemp)
+                                    print(f'{BYELLOW}{WHITE}Your choice has been added to the settings file{RESET}\n\n')
+                                else:
+                                    print(f'{RESET}{RED}Invalid argument. Please send a valid input.\n{RESET}\n')
+                                
                                 RestartNess1 = '(A restart is nessasary for these changes to take place. Enter "quit" to continue)'
                                 RestartNess2 = 'Restart PyPacker'
-                                print("")
+                                validMain = "settings"
+                                utils.ClearConsole()
                         
                         #Customization
                         elif MenuingInput == "ver":
@@ -482,7 +497,7 @@ try:
                         
                             RestartNess1 = '(A restart is nessasary for these changes to take place. Enter "quit" to continue)'
                             RestartNess2 = 'Restart PyPacker'
-                            
+                        
                         elif MenuingInput == "reset":
                             
                             ReallyList = [" sure ", " really sure ", " REALLY sure ", " REALLY REALLY SURE ", " REAL FUCKIN SURE "] #space are there for a reason, dont remove them
